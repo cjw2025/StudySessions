@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Sesh - Smart Study Group Coordination</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <header>
+        <nav>
+            <div class="logo">📚 Study Sesh</div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#benefits">Benefits</a></li>
+                <li><a href="#demo">Demo</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Find Your Perfect Study Partners</h1>
+        <p>A comprehensive study group coordination platform that connects students across courses, instructors, and institutions for enhanced collaborative learning.</p>
+        <button class="cta-button" onclick="alert('Sign up functionality coming soon!')">Get Started Free</button>
+    </section>
+
+    <!-- Motivation/Problem Section -->
+    <section class="motivation">
+        <h2>The Problem We're Solving</h2>
+        <p>Students struggle to find compatible study partners and coordinate effective group sessions, leading to missed learning opportunities and academic isolation. Study Sesh bridges this gap.</p>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits">
+        <h2>Why Study Sesh?</h2>
+        <div class="benefit-grid">
+            <div class="benefit-card">
+                <h3>🎯 Smart Matching</h3>
+                <p>Get matched with study partners across different course sections based on shared subjects and compatible learning styles.</p>
+            </div>
+            <div class="benefit-card">
+                <h3>🤝 Enhanced Learning</h3>
+                <p>Unlock powerful peer-to-peer learning opportunities that enhance understanding and retention.</p>
+            </div>
+            <div class="benefit-card">
+                <h3>⚡ Streamlined Coordination</h3>
+                <p>Effortlessly schedule sessions, book rooms, and coordinate with your study group—all in one place.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <h2>Key Features</h2>
+        <div class="feature-list">
+            <div class="feature-item">
+                <div class="feature-icon">🧠</div>
+                <h3>Smart Study Matching</h3>
+                <p>Connects students across courses and instructors based on shared subjects and learning styles.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🔎</div>
+                <h3>Advanced Search & Filtering</h3>
+                <p>Find peers by course, professor, or study focus area quickly and efficiently.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">📅</div>
+                <h3>Integrated Scheduling</h3>
+                <p>Book physical study rooms or create virtual sessions with calendar sync.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">💬</div>
+                <h3>Real-Time Collaboration</h3>
+                <p>Chat, share notes, and collaborate during live study sessions.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">👤</div>
+                <h3>Profiles & Progress Tracking</h3>
+                <p>Track participation and monitor study progress over time.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🌐</div>
+                <h3>Cross-Section Collaboration</h3>
+                <p>Connect students from different course sections to compare notes and perspectives.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta" id="demo">
+        <h2>Ready to Transform Your Study Experience?</h2>
+        <p>Join thousands of students already studying smarter, not harder.</p>
+        <button class="cta-button" onclick="alert('Demo coming soon!')">Request Demo</button>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Study Sesh. All rights reserved. | Computer Science Capstone Project</p>
+    </footer>
+</body>
+</html>
