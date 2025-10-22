@@ -70,8 +70,7 @@
     <!-- Define an SSL/TLS HTTP/1.1 Connector on port 8443 with HTTP/2
          This connector uses the NIO implementation. The default
          SSLImplementation will depend on the presence of the APR/native
-         library and the useOpenSSL attribute of the
-         AprLifecycleListener.
+         library and the useOpenSSL attribute of the AprLifecycleListener.
          Either JSSE or OpenSSL style configuration may be used regardless of
          the SSLImplementation selected. JSSE style configuration is used below.
     -->
@@ -135,7 +134,7 @@
              Note: The pattern used is equivalent to using pattern="common" -->
         <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs" pattern="%h %l %u %t &quot;%r&quot; %s %b" prefix="localhost_access_log" suffix=".txt"/>
 
-      </Host>
+      <Context docBase="webproject" path="/webproject" reloadable="true" source="org.eclipse.jst.jee.server:webproject"/><Context docBase="StudySessions" path="/StudySessions" reloadable="true" source="org.eclipse.jst.jee.server:StudySessions"/></Host>
     </Engine>
   </Service>
 </Server>
