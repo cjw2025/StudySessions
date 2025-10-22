@@ -5,6 +5,9 @@
 [StudySessionsMySQL.txt](https://github.com/user-attachments/files/23061867/StudySessionsMySQL.txt)
 The MySQL I used to create the database for StudySession WebApp
 
+-- Create database
+CREATE DATABASE IF NOT EXISTS class_webapp_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 
 -- Create User table
 CREATE TABLE User (
