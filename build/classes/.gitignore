@@ -6,3 +6,6 @@
 /User.class
 /UtilProp.class
 /AppContextListener.class
+/AuthAPIServlet.class
+/UserDAO.class
+/PasswordUtil.class
