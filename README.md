@@ -1,4 +1,15 @@
-
+/**
+ * Data Access Object for User operations
+ * Handles all database operations for users (CRUD operations)
+ * 
+ * Methods:
+ * - createUser()        - Insert new user into database
+ * - authenticateUser()  - Verify email/password and return user
+ * - findByEmail()       - Find user by email address
+ * - findById()          - Find user by ID
+ * - updatePassword()    - Change user's password
+ * - deleteUser()        - Remove user from database
+ */
 
 -- Create database
 CREATE DATABASE IF NOT EXISTS class_webapp_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
