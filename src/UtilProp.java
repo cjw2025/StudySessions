@@ -1,42 +1,71 @@
 
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
+/**
+ * Utility class for loading database properties from file
+ */
 public class UtilProp {
-   static final boolean _W = System.getProperty("os.name").toLowerCase().contains("windows");
-   static String _PROP_FILENAME_WIN_LOCAL = "C:\\YOUR_PATH\\webproject\\WebContent\\config.properties";
-   static String _PROP_FILENAME_OSX_LOCAL = "/Users/corywethington/StudySessionsWebApp/webproject/WebContent/config.properties";
-   // * Remote server path
-   static String _PROP_FILENAME_REMOTE = "/var/lib/tomcat10/webapps/webproject/config.properties";
-   static Properties prop = new Properties();
-
-   public static void loadProperty() throws Exception {
-      FileInputStream inputStream = null;
-      if (_W) {
-         if (new File(_PROP_FILENAME_WIN_LOCAL).exists()) {
-            System.out.println("[DBG] Loaded: " + new File(_PROP_FILENAME_WIN_LOCAL).getAbsolutePath());
-            inputStream = new FileInputStream(_PROP_FILENAME_WIN_LOCAL);
-         }
-      } else {
-         if (new File(_PROP_FILENAME_OSX_LOCAL).exists()) {
-            System.out.println("[DBG] Loaded: " + new File(_PROP_FILENAME_OSX_LOCAL).getAbsolutePath());
-            inputStream = new FileInputStream(_PROP_FILENAME_OSX_LOCAL);
-         }
-      }
-      if (new File(_PROP_FILENAME_REMOTE).exists()) {
-         System.out.println("[DBG] Loaded: " + new File(_PROP_FILENAME_REMOTE).getAbsolutePath());
-         inputStream = new FileInputStream(_PROP_FILENAME_REMOTE);
-      }
-      if (inputStream == null) {
-         throw new FileNotFoundException();
-      }
-      prop.load(inputStream);
-   }
-
-   public static String getProp(String key) {
-      return prop.getProperty(key).trim();
-   }
+    
+    private static Properties properties = new Properties();
+    private static boolean loaded = false;
+    
+    /**
+     * Load properties from db.properties file
+     */
+    public static void loadProperty() {
+        if (loaded) {
+            return; // Already loaded
+        }
+        
+        try {
+            // Try loading from classpath first
+            InputStream input = UtilProp.class.getClassLoader().getResourceAsStream("db.properties");
+            
+            if (input == null) {
+                // Try loading from file system
+                input = new FileInputStream("db.properties");
+            }
+            
+            
+            // Load properties
+            properties.load(input);
+            loaded = true;
+            
+            System.out.println("Database properties loaded successfully");
+            input.close();
+            
+        } catch (IOException e) {
+            System.err.println("Error loading db.properties: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Get property value by key
+     * @param key Property key
+     * @return Property value or null if not found
+     */
+    public static String getProp(String key) {
+        if (!loaded) {
+            loadProperty();
+        }
+        return properties.getProperty(key);
+    }
+    
+    /**
+     * Get property value with default
+     * @param key Property key
+     * @param defaultValue Default value if key not found
+     * @return Property value or default value
+     */
+    public static String getProp(String key, String defaultValue) {
+        if (!loaded) {
+            loadProperty();
+        }
+        return properties.getProperty(key, defaultValue);
+    }
 }
