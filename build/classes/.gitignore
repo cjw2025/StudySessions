@@ -1,12 +1,12 @@
+/AppContextListener.class
+/AuthAPIServlet.class
 /DBConnection.class
+/GroupsAPIServlet.class
 /LandingPageServlet.class
+/PasswordUtil.class
 /RegisterServlet.class
 /SimpleFormInsert.class
 /SimpleFormSearch.class
 /User.class
-/UtilProp.class
-/AppContextListener.class
-/AuthAPIServlet.class
 /UserDAO.class
-/PasswordUtil.class
-/GroupsAPIServlet.class
+/UtilProp.class
