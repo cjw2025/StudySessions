@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet("/")
+@WebServlet("/home")  // Changed from "/" to "/home"
 public class LandingPageServlet extends HttpServlet {
     
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
