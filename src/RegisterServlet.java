@@ -1,18 +1,18 @@
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.SQLException;
+
 @WebServlet("/RegisterServlet")
 public class RegisterServlet extends HttpServlet {
 
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -20,38 +20,39 @@ public class RegisterServlet extends HttpServlet {
         String lastName = request.getParameter("last_name");
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
+        String password = request.getParameter("password");
+
+        PrintWriter out = response.getWriter();
+        response.setContentType("text/html");
 
         try {
-			DBConnection.getDBConnection();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        Connection conn = DBConnection.connection;
+            Connection conn = DBConnection.getDBConnection(); // assumes DBConnection.connection is set
+            UserDAO userDAO = new UserDAO(conn);
 
-        try {
-            Connection connection = null;
-            DBConnection.getDBConnection();
-            connection = DBConnection.connection;
+            User user = new User();
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setEmail(email);
+            user.setPhone(phone);
 
-            String sql = "INSERT INTO myTable (id, MYUSER, EMAIL, PHONE) VALUES (default, ?, ?, ?)";
-            PreparedStatement preparedStmt = connection.prepareStatement(sql);
-            String fullName = firstName + " " + lastName;
-            preparedStmt.setString(1, fullName);
-            preparedStmt.setString(2, email);
-            preparedStmt.setString(3, phone);
+            User createdUser = userDAO.createUser(user, password);
 
-            preparedStmt.execute();
+            if (createdUser != null) {
+                out.println("<html><body>");
+                out.println("<h2>Registration Successful!</h2>");
+                out.println("<p>Welcome, " + firstName + " " + lastName + "!</p>");
+                out.println("</body></html>");
+            } else {
+                out.println("<html><body>");
+                out.println("<h3>Error: Registration failed</h3>");
+                out.println("</body></html>");
+            }
 
-            PrintWriter out = response.getWriter();
-            out.println("<html><body>");
-            out.println("<h2>Registration Successful!</h2>");
-            out.println("<p>Welcome, " + firstName + " " + lastName + "</p>");
-            out.println("</body></html>");
-
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
-            response.getWriter().println("Error: " + e.getMessage());
+            out.println("<html><body>");
+            out.println("<h3>Error: " + e.getMessage() + "</h3>");
+            out.println("</body></html>");
         }
     }
 }
