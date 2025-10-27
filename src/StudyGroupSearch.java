@@ -37,7 +37,6 @@ public class StudyGroupSearch extends HttpServlet {
         PreparedStatement preparedStatement = null;
 
         try {
-            // Use your custom DBconnection2 class
             DBconnection2.getDBConnection();
             connection = DBconnection2.connection;
 
@@ -91,3 +90,4 @@ public class StudyGroupSearch extends HttpServlet {
         doGet(request, response);
     }
 }
+
