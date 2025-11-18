@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -14,23 +13,20 @@ public class RegisterServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        
         String firstName = request.getParameter("first_name");
         String lastName = request.getParameter("last_name");
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
         
-        PrintWriter out = response.getWriter();
-        response.setContentType("text/html");
-        
         try {
             Connection conn = DBConnection.getDBConnection();
             
             if (conn == null || conn.isClosed()) {
-                out.println("<html><body>");
-                out.println("<h3>Error: Cannot connect to database</h3>");
-                out.println("<p>Please check server logs</p>");
-                out.println("<a href='signup.html'>Go back</a>");
-                out.println("</body></html>");
+                response.setStatus(500);
+                response.getWriter().write("{\"success\": false, \"message\": \"Cannot connect to database\"}");
                 return;
             }
             
@@ -39,10 +35,8 @@ public class RegisterServlet extends HttpServlet {
             // Check if user already exists
             User existingUser = userDAO.findByEmail(email);
             if (existingUser != null) {
-                out.println("<html><body>");
-                out.println("<h3>Error: Email already registered</h3>");
-                out.println("<a href='signup.html'>Go back</a>");
-                out.println("</body></html>");
+                response.setStatus(400);
+                response.getWriter().write("{\"success\": false, \"message\": \"Email already registered\"}");
                 return;
             }
             
@@ -55,25 +49,29 @@ public class RegisterServlet extends HttpServlet {
             User createdUser = userDAO.createUser(user);
             
             if (createdUser != null) {
-                out.println("<html><body>");
-                out.println("<h2>Registration Successful!</h2>");
-                out.println("<p>Welcome, " + firstName + " " + lastName + "!</p>");
-                out.println("<p>Your user ID is: " + createdUser.getUserId() + "</p>");
-                out.println("<a href='index.html'>Go to Home</a>");
-                out.println("</body></html>");
+                response.setStatus(200);
+                response.getWriter().write("{\"success\": true, \"message\": \"Account created successfully!\", \"userId\": " + createdUser.getUserId() + "}");
             } else {
-                out.println("<html><body>");
-                out.println("<h3>Error: Registration failed</h3>");
-                out.println("<a href='signup.html'>Try again</a>");
-                out.println("</body></html>");
+                response.setStatus(500);
+                response.getWriter().write("{\"success\": false, \"message\": \"Registration failed\"}");
             }
             
         } catch (SQLException e) {
             e.printStackTrace();
-            out.println("<html><body>");
-            out.println("<h3>Database Error: " + e.getMessage() + "</h3>");
-            out.println("<a href='signup.html'>Try again</a>");
-            out.println("</body></html>");
+            response.setStatus(500);
+            response.getWriter().write("{\"success\": false, \"message\": \"Database error: " + escapeJson(e.getMessage()) + "\"}");
+        } finally {
+            DBConnection.closeConnection();
         }
+    }
+    
+    // Helper method to escape JSON strings
+    private String escapeJson(String str) {
+        if (str == null) return "";
+        return str.replace("\\", "\\\\")
+                  .replace("\"", "\\\"")
+                  .replace("\n", "\\n")
+                  .replace("\r", "\\r")
+                  .replace("\t", "\\t");
     }
 }

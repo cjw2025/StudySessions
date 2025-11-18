@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Sesh - Smart Study Group Coordination</title>
+    <title>📚 StudySessions - Find Study Groups</title>
     <style>
         * {
             margin: 0;
@@ -15,18 +15,19 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
             color: #333;
+            background: #f8f9fa;
         }
 
         /* Header/Navigation */
         header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 1rem 0;
+            padding: 1.5rem 0;
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         }
 
         nav {
@@ -39,80 +40,89 @@
         }
 
         .logo {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: bold;
+            letter-spacing: 0.5px;
         }
 
         .nav-links {
             display: flex;
-            gap: 2rem;
-            list-style: none;
+            align-items: center;
+            gap: 2.5rem;
         }
 
         .nav-links a {
             color: white;
             text-decoration: none;
-            transition: opacity 0.3s;
+            font-weight: 500;
+            font-size: 1.05rem;
+            transition: opacity 0.2s;
         }
 
         .nav-links a:hover {
             opacity: 0.8;
         }
 
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* User Greeting - smaller + italicized */
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 0.95rem;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .user-area span#userName {
+            font-weight: 600;
             color: white;
-            padding: 120px 2rem 80px;
-            text-align: center;
-            margin-top: 60px;
         }
-
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            animation: fadeInUp 0.8s ease;
+        
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 600;
         }
-
-        .hero p {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-            opacity: 0.95;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .cta-button {
+        
+        .logout-btn:hover {
             background: white;
             color: #667eea;
-            padding: 15px 40px;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-            text-decoration: none;
-            display: inline-block;
         }
 
-        .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        .logout-link {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 0.85rem;
+            text-decoration: none;
+            font-style: italic;
+        }
+
+        .logout-link:hover {
+            color: white;
+            text-decoration: underline;
         }
 
         /* Search Bar Section */
         .search-section {
-            padding: 80px 2rem;
+            padding: 140px 2rem 80px;
             text-align: center;
-            background: #f8f9fa;
         }
 
         .search-section h2 {
             font-size: 2.5rem;
             color: #667eea;
             margin-bottom: 1.5rem;
+        }
+
+        .search-section p {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 2rem;
         }
 
         .search-bar {
@@ -125,9 +135,9 @@
 
         .search-bar input {
             flex: 1;
-            padding: 15px;
+            padding: 15px 20px;
             font-size: 1.1rem;
-            border: 1px solid #ddd;
+            border: 2px solid #e0e0e0;
             border-radius: 50px;
             outline: none;
             transition: border-color 0.3s;
@@ -135,12 +145,13 @@
 
         .search-bar input:focus {
             border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102,126,234,0.15);
         }
 
         .search-bar button {
             background: #667eea;
             color: white;
-            padding: 15px 30px;
+            padding: 15px 35px;
             border: none;
             border-radius: 50px;
             font-size: 1.1rem;
@@ -151,18 +162,22 @@
 
         .search-bar button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 25px rgba(102,126,234,0.3);
         }
 
         /* Search Results Table */
+        .results-container {
+            max-width: 1000px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+
         .results-table {
             width: 100%;
-            max-width: 800px;
-            margin: 2rem auto;
             border-collapse: collapse;
             background: white;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border-radius: 10px;
+            border-radius: 12px;
             overflow: hidden;
             display: none;
         }
@@ -175,13 +190,14 @@
         .results-table td {
             padding: 1rem;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #e0e0e0;
         }
 
         .results-table th {
             background: #667eea;
             color: white;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 1rem;
         }
 
         .results-table tr:nth-child(even) {
@@ -193,28 +209,24 @@
             transition: background 0.3s;
         }
 
-        .results-table .placeholder {
-            color: #999;
+        .results-table td {
+            color: #333;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
             font-style: italic;
-        }
-
-        .results-table .placeholder .join-button {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        .results-table .placeholder .join-button:hover {
-            transform: none;
-            box-shadow: none;
         }
 
         .join-button {
             background: #667eea;
             color: white;
-            padding: 10px 20px;
+            padding: 10px 24px;
             border: none;
             border-radius: 50px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: bold;
             cursor: pointer;
             transition: transform 0.3s, box-shadow 0.3s;
@@ -222,26 +234,211 @@
 
         .join-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 20px rgba(102,126,234,0.3);
         }
 
-        /* CTA Section */
-        .final-cta {
-            padding: 80px 2rem;
+        .join-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .create-link {
+            display: block;
             text-align: center;
-            background: #f8f9fa;
+            margin-top: 2rem;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
         }
 
-        .final-cta h2 {
-            font-size: 2.5rem;
+        .create-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Toast Notification Styles */
+        .toast-container {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            max-width: 400px;
+            pointer-events: all;
+            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        .toast-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .toast-message {
+            flex: 1;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+
+        .toast.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .toast.success .toast-icon {
+            color: #10b981;
+        }
+
+        .toast.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .toast.error .toast-icon {
+            color: #ef4444;
+        }
+
+        .toast.info {
+            border-left: 4px solid #3b82f6;
+        }
+
+        .toast.info .toast-icon {
+            color: #3b82f6;
+        }
+
+        .toast.warning {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .toast.warning .toast-icon {
+            color: #f59e0b;
+        }
+
+        /* Confirmation Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9998;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 450px;
+            width: 90%;
+            animation: scaleIn 0.2s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal h3 {
+            font-size: 1.5rem;
             margin-bottom: 1rem;
             color: #333;
         }
 
-        .final-cta p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            color: #555;
+        .modal p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-btn.cancel {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .modal-btn.cancel:hover {
+            background: #d1d5db;
+        }
+
+        .modal-btn.confirm {
+            background: #667eea;
+            color: white;
+        }
+
+        .modal-btn.confirm:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102,126,234,0.3);
         }
 
         /* Footer */
@@ -250,26 +447,17 @@
             color: white;
             text-align: center;
             padding: 2rem;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            margin-top: 4rem;
         }
 
         @media (max-width: 768px) {
-            .hero h1 {
+            .search-section h2 {
                 font-size: 2rem;
             }
 
             .nav-links {
                 gap: 1rem;
+                font-size: 0.9rem;
             }
 
             .search-bar {
@@ -283,38 +471,76 @@
 
             .results-table th,
             .results-table td {
-                font-size: 0.9rem;
-                padding: 0.8rem;
+                font-size: 0.85rem;
+                padding: 0.7rem;
             }
 
             .join-button {
                 padding: 8px 16px;
-                font-size: 0.9rem;
+                font-size: 0.85rem;
+            }
+
+            .toast-container {
+                right: 10px;
+                left: 10px;
+            }
+
+            .toast {
+                min-width: auto;
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h3>Join Study Group?</h3>
+            <p id="modalMessage"></p>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+                <button class="modal-btn confirm" onclick="confirmJoin()">Join Group</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Navigation -->
     <header>
         <nav>
-            <div class="logo">📚 Study Sesh</div>
-            <ul class="nav-links">
-                <li><a href="#features">Features</a></li>
-                <li><a href="#benefits">Benefits</a></li>
-                <li><a href="#demo">Demo</a></li>
-            </ul>
+            <div class="logo">📚 StudySessions</div>
+
+            <div class="nav-links">
+                <a href="searchForm.html">Find Groups</a>
+                <a href="myGroups.html">My Groups</a>
+                <a href="createGroup.html">Create Group</a>
+
+                <!-- User Greeting (smaller + italicized) -->
+                <div class="user-area">
+                    Hi,<span id="userName">Guest</span>!
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
         </nav>
     </header>
 
     <!-- Search Bar Section -->
     <section class="search-section">
-        <h2>Find Study Partners Now</h2>
+        <h2>Find Your Study Group</h2>
+        <p>Search by class name, course code, subject, or group name</p>
         <div class="search-bar">
-            <input type="text" id="search-input" placeholder="Search by course, class code, or subject...">
+            <input type="text" id="search-input" placeholder="e.g., MATH101, Calculus, Physics..." 
+                   onkeypress="if(event.key === 'Enter') searchStudyGroups()">
             <button onclick="searchStudyGroups()">Search</button>
         </div>
-        <table class="results-table active" id="results-table">
+    </section>
+
+    <!-- Results Container -->
+    <div class="results-container">
+        <table class="results-table" id="results-table">
             <thead>
                 <tr>
                     <th>Class Name</th>
@@ -325,61 +551,132 @@
                 </tr>
             </thead>
             <tbody id="results-table-body">
-                <tr class="placeholder">
-                    <td>Sample Course</td>
-                    <td>CRS101</td>
-                    <td>Mathematics</td>
-                    <td>Math Study Group</td>
-                    <td><button class="join-button" disabled>Join</button></td>
-                </tr>
-                <tr class="placeholder">
-                    <td>Intro to Science</td>
-                    <td>SCI102</td>
-                    <td>Science</td>
-                    <td>Science Buddies</td>
-                    <td><button class="join-button" disabled>Join</button></td>
-                </tr>
-                <tr class="placeholder">
-                    <td>History Overview</td>
-                    <td>HST103</td>
-                    <td>History</td>
-                    <td>History Crew</td>
-                    <td><button class="join-button" disabled>Join</button></td>
-                </tr>
+                <!-- Results will be inserted here -->
             </tbody>
         </table>
-    </section>
+
+        <a href="createGroup.html" class="create-link">Don't see your class? Create a new study group →</a>
+    </div>
 
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2025 Study Sesh. All rights reserved. | Computer Science Capstone Project</p>
-    </footer>
 
     <script>
+        // Toast notification system
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: '✓',
+                error: '✕',
+                warning: '⚠',
+                info: 'ℹ'
+            };
+            
+            toast.innerHTML = `
+                <span class="toast-icon">${icons[type] || icons.info}</span>
+                <span class="toast-message">${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Remove toast after animation completes
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Modal system
+        let pendingJoinGroupId = null;
+        let pendingJoinGroupName = null;
+
+        function showModal(groupId, groupName) {
+            console.log('showModal called with:', { groupId, groupName });
+            pendingJoinGroupId = groupId;
+            pendingJoinGroupName = groupName;
+            console.log('Pending values set:', { pendingJoinGroupId, pendingJoinGroupName });
+            document.getElementById('modalMessage').textContent = `Are you sure you want to join "${groupName}"?`;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            pendingJoinGroupId = null;
+            pendingJoinGroupName = null;
+        }
+
+        async function confirmJoin() {
+            if (pendingJoinGroupId === null || pendingJoinGroupName === null) {
+                showToast('Error: No group selected', 'error');
+                closeModal();
+                return;
+            }
+            
+            const groupId = pendingJoinGroupId;
+            const groupName = pendingJoinGroupName;
+            
+            closeModal();
+            await joinGroup(groupId, groupName);
+        }
+
+        // Check if user is logged in on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const nameSpan = document.getElementById('userName');
+
+            if (user && user.firstName) {
+                nameSpan.textContent = user.firstName;
+            } else {
+                if (!window.location.pathname.includes('login.html')) {
+                    window.location.href = 'login.html';
+                }
+            }
+        });
+
         async function searchStudyGroups() {
             const searchInput = document.getElementById('search-input').value.trim();
             const resultsTable = document.getElementById('results-table');
             const resultsTableBody = document.getElementById('results-table-body');
 
             if (!searchInput) {
-                alert('Please enter a search term');
+                showToast('Please enter a search term', 'warning');
+                return;
+            }
+
+            // Check if user is logged in
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user) {
+                showToast('You must be logged in to search for groups', 'error');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
                 return;
             }
 
             try {
-                const response = await fetch(`/search?query=${encodeURIComponent(searchInput)}`);
+                const response = await fetch(`api/groups/search?query=${encodeURIComponent(searchInput)}`);
+                
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
+                
                 const groups = await response.json();
 
-                // Clear previous results, including placeholders
+                // Clear previous results
                 resultsTableBody.innerHTML = '';
 
                 if (groups.length === 0) {
-                    resultsTableBody.innerHTML = '<tr><td colspan="5">No study groups found</td></tr>';
+                    resultsTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="no-results">
+                                No study groups found for "${searchInput}". 
+                                <a href="createGroup.html" style="color: #667eea; font-weight: 600;">Create one?</a>
+                            </td>
+                        </tr>
+                    `;
                     resultsTable.classList.add('active');
+                    showToast('No groups found matching your search', 'info');
                     return;
                 }
 
@@ -391,18 +688,77 @@
                         <td>${group.classCode}</td>
                         <td>${group.subject}</td>
                         <td>${group.groupName}</td>
-                        <td><button class="join-button" onclick="alert('Join functionality coming soon!')">Join</button></td>
+                        <td><button class="join-button" onclick='showModal(${group.groupId}, "${group.groupName.replace(/"/g, '&quot;')}")'>Join</button></td>
                     `;
                     resultsTableBody.appendChild(row);
                 });
 
                 // Show the table
                 resultsTable.classList.add('active');
+                showToast(`Found ${groups.length} study group${groups.length === 1 ? '' : 's'}`, 'success');
             } catch (error) {
                 console.error('Error fetching study groups:', error);
-                alert('An error occurred while searching. Please try again.');
+                showToast('An error occurred while searching. Please try again.', 'error');
             }
         }
+
+        async function joinGroup(groupId, groupName) {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user) {
+                showToast('You must be logged in to join a group', 'error');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
+                return;
+            }
+
+            // Debug: Log what we're sending
+            console.log('Joining group:', { groupId, groupName, userId: user.id });
+
+            try {
+                const params = new URLSearchParams({
+                    user: JSON.stringify(user),
+                    groupId: String(groupId)
+                });
+                
+                console.log('Sending params:', params.toString());
+                
+                const response = await fetch('api/groups/join', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: params
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showToast(`Successfully joined "${groupName}"! Check "My Groups" to see it.`, 'success');
+                    // Optionally refresh search results
+                    setTimeout(() => {
+                        searchStudyGroups();
+                    }, 1000);
+                } else {
+                    showToast(result.message || 'Failed to join group', 'error');
+                }
+            } catch (error) {
+                console.error('Error joining group:', error);
+                showToast('Network error. Please try again.', 'error');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('user');
+            fetch('api/auth/logout', { method: 'GET' }).finally(() => {
+                window.location.href = 'login.html';
+            });
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
     </script>
 </body>
 </html>

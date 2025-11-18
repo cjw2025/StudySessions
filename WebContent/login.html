@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - StudySessions</title>
+    <title>📚 Login</title>
     <style>
         * {
             margin: 0;
@@ -116,7 +116,7 @@
 </head>
 <body>
     <div class="login-container">
-        <h1>StudySessions Login</h1>
+        <h1>📚 StudySessions</h1>
         
         <div id="errorMessage" class="error-message"></div>
         
@@ -144,57 +144,51 @@
         </div>
     </div>
 
-    <script>
-        const loginForm = document.getElementById('loginForm');
-        const loginBtn = document.getElementById('loginBtn');
-        const errorMessage = document.getElementById('errorMessage');
+<script>
+    const loginForm = document.getElementById('loginForm');
+    const loginBtn = document.getElementById('loginBtn');
+    const errorMessage = document.getElementById('errorMessage');
 
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            // Disable button and show loading state
-            loginBtn.disabled = true;
-            loginBtn.textContent = 'Logging in...';
-            errorMessage.classList.remove('show');
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-            const formData = {
-                email: document.getElementById('email').value,
-                password: document.getElementById('password').value
-            };
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Logging in...';
+        errorMessage.classList.remove('show');
 
-            try {
-                const response = await fetch('/StudySessions/api/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
+        const email = document.getElementById('email').value;
 
-                const data = await response.json();
+        try {
+            const response = await fetch('api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ email: email })  // password ignored for now
+            });
 
-                if (response.ok) {
-                    // Store user info and redirect to dashboard
-                    localStorage.setItem('user', JSON.stringify(data.user));
-                    window.location.href = 'dashboard.html';
-                } else {
-                    // Show error message
-                    showError(data.message || 'Login failed. Please try again.');
-                }
-            } catch (error) {
-                showError('Network error. Please check your connection and try again.');
-                console.error('Login error:', error);
-            } finally {
-                // Re-enable button
-                loginBtn.disabled = false;
-                loginBtn.textContent = 'Login';
+            const data = await response.json();
+
+            if (response.ok) {
+                // Save user info in localStorage so it survives full page loads
+                localStorage.setItem('user', JSON.stringify(data.user));
+
+                // Redirect to createGroup.html (or dashboard.html)
+                window.location.href = 'myGroups.html';
+            } else {
+                showError(data.message || 'Login failed');
             }
-        });
-
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.classList.add('show');
+        } catch (err) {
+            showError('Connection failed. Is Tomcat running?');
+            console.error(err);
+        } finally {
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'Login';
         }
-    </script>
+    });
+
+    function showError(msg) {
+        errorMessage.textContent = msg;
+        errorMessage.classList.add('show');
+    }
+</script>
 </body>
 </html>
