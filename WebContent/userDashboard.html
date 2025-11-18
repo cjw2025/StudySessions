@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | StudySessions</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; background: #f8f9fa; min-height: 100vh; }
+        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem 0; position: fixed; width: 100%; top: 0; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+        nav { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; }
+        .logo { font-size: 1.8rem; font-weight: bold; }
+        .nav-links { display: flex; gap: 2.5rem; align-items: center; }
+        .nav-links a { color: white; text-decoration: none; font-weight: 500; }
+        .nav-links a:hover { opacity: 0.8; }
+        .user-area span#userName { font-weight: 600; color: white; }
+        .logout-btn { background: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 8px 20px; border-radius: 5px; cursor: pointer; font-weight: 600; }
+        .logout-btn:hover { background: white; color: #667eea; }
+        main { padding: 140px 2rem 80px; max-width: 1100px; margin: 0 auto; text-align: center; }
+        .welcome h1 { font-size: 2.8rem; color: #667eea; }
+        .card { background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin: 2rem auto; max-width: 1000px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #e0e0e0; }
+        th { background: #667eea; color: white; }
+        tr:nth-child(even) { background: #f8f9fa; }
+        .leave-btn { background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 50px; cursor: pointer; font-weight: bold; }
+        .leave-btn:hover { background: #dc2626; }
+        .desc { max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .no-groups { padding: 3rem; color: #666; font-style: italic; }
+        .toast-container { position: fixed; top: 100px; right: 20px; z-index: 9999; }
+        .toast { background: white; padding: 16px 24px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); margin-bottom: 10px; min-width: 300px; border-left: 4px solid #10b981; animation: slideIn 0.3s ease; }
+        .toast.error { border-left-color: #ef4444; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9998; align-items: center; justify-content: center; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: white; padding: 2rem; border-radius: 16px; max-width: 450px; width: 90%; text-align: center; }
+        .modal-buttons { margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center; }
+        .modal-btn { padding: 12px 24px; border: none; border-radius: 50px; cursor: pointer; font-weight: 600; }
+        .modal-btn.cancel { background: #e5e7eb; color: #374151; }
+        .modal-btn.confirm { background: #ef4444; color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- MODAL -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h3>Leave Study Group?</h3>
+            <p id="modalMessage">Are you sure?</p>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+                <button class="modal-btn confirm" onclick="confirmLeave()">Leave Group</button>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <nav>
+            <div class="logo">StudySessions</div>
+            <div class="nav-links">
+                <a href="searchForm.html">Find Groups</a>
+                <a href="userDashboard.html">Dashboard</a>
+                <a href="createGroup.html">Create Group</a>
+                <div class="user-area">
+                    Hi, <span id="userName">User</span>!
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="welcome">
+            <h1>Welcome back, <span id="firstNameDisplay">User</span>!</h1>
+            <p>Here are your study groups</p>
+        </div>
+
+        <div class="card">
+            <h2>My Study Groups</h2>
+            <table id="groupsTable" style="display:none;">
+                <thead>
+                    <tr>
+                        <th>Group Name</th>
+                        <th>Class</th>
+                        <th>Code</th>
+                        <th>Subject</th>
+                        <th>Members</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="groupsTableBody"></tbody>
+            </table>
+            <div id="noGroupsMessage" class="no-groups">
+                You're not in any groups yet.<br><br>
+                <a href="searchForm.html" style="color:#667eea; font-weight:600;">Find groups →</a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let groupToLeave = null;
+
+        function showToast(msg, type = 'success') {
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.textContent = msg;
+            document.getElementById('toastContainer').appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+
+        function openLeaveModalFromButton(btn) {
+            groupToLeave = Number(btn.dataset.groupid);
+            const name = btn.dataset.groupname || 'this group';
+            document.getElementById('modalMessage').textContent = `Leave "${name}"?`;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        async function confirmLeave() {
+            if (!groupToLeave) return;
+            const gid = groupToLeave;  // ← capture before closing
+            closeModal();
+            groupToLeave = null;
+            await leaveGroup(gid);
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = JSON.parse(localStorage.getItem('user') || 'null');
+            if (!user?.id) return location.href = 'login.html';
+
+            document.getElementById('userName').textContent = user.firstName || 'User';
+            document.getElementById('firstNameDisplay').textContent = user.firstName || 'User';
+
+            await loadMyGroups();
+        });
+
+        async function loadMyGroups() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            try {
+                const res = await fetch('/webproject/api/groups/my?user=' + encodeURIComponent(JSON.stringify(user)));
+                const data = await res.json();
+
+                const tbody = document.getElementById('groupsTableBody');
+                const table = document.getElementById('groupsTable');
+                const noMsg = document.getElementById('noGroupsMessage');
+                tbody.innerHTML = '';
+
+                if (!data.success || data.groups.length === 0) {
+                    noMsg.style.display = 'block';
+                    table.style.display = 'none';
+                    return;
+                }
+
+                noMsg.style.display = 'none';
+                table.style.display = 'table';
+
+                data.groups.forEach(g => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${escape(g.groupName)}</strong></td>
+                        <td>${escape(g.className)}</td>
+                        <td><code>${escape(g.classCode)}</code></td>
+                        <td>${escape(g.subject)}</td>
+                        <td><strong>${g.memberCount}</strong></td>
+                        <td class="desc" title="${escape(g.description || '')}">
+                            ${escape((g.description || 'No description').substring(0,60))}${g.description?.length > 60 ? '...' : ''}
+                        </td>
+                        <td>
+                            <button class="leave-btn"
+                                    data-groupid="${g.groupId}"
+                                    data-groupname="${escape(g.groupName)}"
+                                    onclick="openLeaveModalFromButton(this)">
+                                Leave
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (e) { console.error(e); showToast('Failed to load groups', 'error'); }
+        }
+
+        async function leaveGroup(groupId) {
+            const user = JSON.parse(localStorage.getItem('user'));
+            console.log('Leaving → userId:', user.id, 'groupId:', groupId);
+
+            try {
+                const res = await fetch('/webproject/api/groups/leave', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `userId=${user.id}&groupId=${groupId}`
+                });
+                const json = await res.json();
+                if (json.success) {
+                    showToast('Left the group!', 'success');
+                    loadMyGroups();
+                } else {
+                    showToast(json.message || 'Failed', 'error');
+                }
+            } catch (e) {
+                showToast('Network error', 'error');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('user');
+            location.href = 'login.html';
+        }
+
+        function escape(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        document.getElementById('modalOverlay').addEventListener('click', e => {
+            if (e.target === document.getElementById('modalOverlay')) closeModal();
+        });
+    </script>
+</body>
+</html>
