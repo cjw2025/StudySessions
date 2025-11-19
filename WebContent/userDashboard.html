@@ -4,70 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📚 Dashboard | StudySessions</title>
+
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; background: #f8f9fa; min-height: 100vh; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8f9fa; color: #333; line-height: 1.6; min-height: 100vh; }
+
         header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem 0; position: fixed; width: 100%; top: 0; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
-        nav { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; }
+        nav { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
         .logo { font-size: 1.8rem; font-weight: bold; }
         .nav-links { display: flex; gap: 2.5rem; align-items: center; }
-        .nav-links a { color: white; text-decoration: none; font-weight: 500; }
+        .nav-links a { color: white; text-decoration: none; font-weight: 500; font-size: 1.05rem; transition: opacity 0.2s; }
         .nav-links a:hover { opacity: 0.8; }
+        .nav-links a.active { opacity: 1; font-weight: 700; }
 
-        .user-area {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            font-size: 0.95rem;
-        }
-        .user-greeting {
-            text-align: right;
-        }
-        .user-greeting .greeting {
-            font-style: italic;
-            margin-bottom: 2px;
-        }
+        .user-area { display: flex; align-items: center; gap: 1.5rem; font-size: 0.95rem; }
+        .user-greeting { text-align: right; }
+        .user-greeting .greeting { font-style: italic; margin-bottom: 2px; }
         .user-greeting span#fullUserName { font-weight: 600; color: white; }
-        .user-greeting .dashboard-link {
-            font-size: 0.9rem;
-            color: rgba(255,255,255,0.9);
-            text-decoration: none;
-            border-bottom: 1px dotted rgba(255,255,255,0.6);
-            transition: all 0.2s;
-        }
-        .user-greeting .dashboard-link:hover {
-            color: white;
-            border-bottom-color: white;
-        }
+        .user-greeting .dashboard-link { font-size: 0.9rem; color: rgba(255,255,255,0.9); text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,0.6); transition: all 0.2s; }
+        .user-greeting .dashboard-link:hover { color: white; border-bottom-color: white; }
+        .logout-btn { background: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 8px 20px; border-radius: 5px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .logout-btn:hover { background: white; color: #667eea; }
 
-        .logout-btn {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 2px solid white;
-            padding: 8px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            white-space: nowrap;
-            transition: all 0.3s;
-        }
-        .logout-btn:hover {
-            background: white;
-            color: #667eea;
-        }
-
-        main { padding: 140px 2rem 80px; max-width: 1100px; margin: 0 auto; }
+        main { padding: 140px 2rem 80px; max-width: 1200px; margin: 0 auto; }
         .welcome h1 { font-size: 2.8rem; color: #667eea; text-align: center; margin-bottom: 0.5rem; }
         .welcome p { text-align: center; color: #666; margin-bottom: 3rem; }
 
-        .user-info-card {
-            background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 2.5rem; text-align: center;
-        }
+        .user-info-card { background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 2.5rem; text-align: center; }
         .user-info-card h2 { color: #667eea; margin-bottom: 1.5rem; font-size: 1.9rem; }
         .user-info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; font-size: 1.15rem; }
         .user-info-item { background: #f8f9fa; padding: 1rem; border-radius: 12px; border-left: 4px solid #667eea; }
         .user-info-item strong { display: block; font-size: 0.9rem; color: #667eea; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .calendar-section { background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 2.5rem; }
+        .calendar-section h2 { color: #667eea; margin-bottom: 1rem; font-size: 1.9rem; text-align: center; }
+        #masterCalendar { background: white; padding: 1rem; border-radius: 12px; }
 
         .card { background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 2rem; }
         table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
@@ -79,31 +53,59 @@
         .desc { max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .no-groups { text-align: center; padding: 3rem; color: #666; font-style: italic; font-size: 1.3rem; }
 
-        .toast-container { position: fixed; top: 100px; right: 20px; z-index: 9999; }
-        .toast { background: white; padding: 16px 24px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); margin-bottom: 10px; min-width: 300px; border-left: 4px solid #10b981; animation: slideIn 0.3s; }
+        .toast-container { position: fixed; top: 100px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: white; padding: 16px 24px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px; min-width: 300px; animation: slideIn 0.3s ease; border-left: 4px solid #10b981; }
         .toast.error { border-left-color: #ef4444; }
-        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        .toast-icon { font-size: 20px; }
+        .toast.success .toast-icon { color: #10b981; }
+        .toast.error .toast-icon { color: #ef4444; }
+        @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9998; align-items: center; justify-content: center; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9998; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex; }
-        .modal { background: white; padding: 2rem; border-radius: 16px; max-width: 450px; width: 90%; text-align: center; }
-        .modal-buttons { margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center; }
-        .modal-btn { padding: 12px 24px; border: none; border-radius: 50px; cursor: pointer; font-weight: 600; }
+        .modal { background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 520px; width: 90%; text-align: center; }
+        .modal .group-name { color: #667eea; font-weight: 600; font-size: 1.2rem; margin-bottom: 0.8rem; }
+        .modal h3 { font-size: 1.8rem; margin: 0 0 1.5rem 0; color: #333; }
+        .event-detail { margin-bottom: 1rem; padding: 0.8rem 0; border-bottom: 1px solid #eee; text-align: left; }
+        .event-detail strong { color: #667eea; display: block; margin-bottom: 0.4rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .event-detail p { color: #444; margin: 0; }
+        .modal-buttons { display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; }
+        .modal-btn { padding: 10px 24px; border: none; border-radius: 50px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
         .modal-btn.cancel { background: #e5e7eb; color: #374151; }
-        .modal-btn.confirm { background: #ef4444; color: white; }
+        .modal-btn.cancel:hover { background: #d1d5db; }
     </style>
 </head>
 <body>
 
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- PERFECT EVENT DETAILS MODAL -->
+    <div class="modal-overlay" id="eventDetailsModal">
+        <div class="modal">
+            <!-- Group Name at the top (purple) -->
+            <div class="group-name" id="modalGroupName">Unknown Group</div>
+            
+            <!-- Event Title - large and clean -->
+            <h3 id="modalEventTitle">Event Title</h3>
+            
+            <div class="event-detail"><strong>Description</strong><p id="modalEventDescription">No description</p></div>
+            <div class="event-detail"><strong>Start</strong><p id="modalEventStart"></p></div>
+            <div class="event-detail"><strong>End</strong><p id="modalEventEnd"></p></div>
+            
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" onclick="document.getElementById('eventDetailsModal').classList.remove('active')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leave Group Modal -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal">
             <h3>Leave Study Group?</h3>
             <p id="modalMessage">Are you sure?</p>
             <div class="modal-buttons">
                 <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
-                <button class="modal-btn confirm" onclick="confirmLeave()">Leave Group</button>
+                <button class="modal-btn delete" onclick="confirmLeave()">Leave Group</button>
             </div>
         </div>
     </div>
@@ -115,7 +117,6 @@
                 <a href="searchForm.html">Find Groups</a>
                 <a href="myGroups.html">My Groups</a>
                 <a href="createGroup.html">Create Group</a>
-
                 <div class="user-area">
                     <div class="user-greeting">
                         <div class="greeting">Hi, <span id="fullUserName">User</span>!</div>
@@ -130,41 +131,27 @@
     <main>
         <div class="welcome">
             <h1>Welcome back, <span id="firstNameDisplay">User</span>!</h1>
-            <p>Here’s your dashboard</p>
+            
         </div>
 
         <div class="user-info-card">
             <h2>Your Account</h2>
             <div class="user-info-grid">
-                <div class="user-info-item">
-                    <strong>Full Name</strong>
-                    <span id="fullNameDisplay">Loading...</span>
-                </div>
-                <div class="user-info-item">
-                    <strong>Email Address</strong>
-                    <span id="emailDisplay">Loading...</span>
-                </div>
-                <div class="user-info-item">
-                    <strong>User ID</strong>
-                    <code id="userIdDisplay">#000</code>
-                </div>
+                <div class="user-info-item"><strong>Full Name</strong><span id="fullNameDisplay">Loading...</span></div>
+                <div class="user-info-item"><strong>Email Address</strong><span id="emailDisplay">Loading...</span></div>
+                <div class="user-info-item"><strong>User ID</strong><code id="userIdDisplay">#000</code></div>
             </div>
         </div>
 
+        <div class="calendar-section">
+            <h2>Your Study Calendar</h2>
+            <div id="masterCalendar"></div>
+        </div>
+
         <div class="card">
-            <h2>My Study Groups</h2>
+            <h2>Your Study Groups</h2>
             <table id="groupsTable" style="display:none;">
-                <thead>
-                    <tr>
-                        <th>Group Name</th>
-                        <th>Class</th>
-                        <th>Code</th>
-                        <th>Subject</th>
-                        <th>Members</th>
-                        <th>Description</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
+                <thead><tr><th>Group Name</th><th>Class</th><th>Code</th><th>Subject</th><th>Members</th><th>Description</th><th>Action</th></tr></thead>
                 <tbody id="groupsTableBody"></tbody>
             </table>
             <div id="noGroupsMessage" class="no-groups">
@@ -180,7 +167,7 @@
         function showToast(msg, type = 'success') {
             const t = document.createElement('div');
             t.className = `toast ${type}`;
-            t.textContent = msg;
+            t.innerHTML = `<span class="toast-icon">${type === 'success' ? '✓' : '✕'}</span><span>${msg}</span>`;
             document.getElementById('toastContainer').appendChild(t);
             setTimeout(() => t.remove(), 3000);
         }
@@ -212,24 +199,21 @@
                 return;
             }
 
-            const firstName = user.firstName || 'User';
-            const lastName = user.lastName || '';
-            const fullName = `${firstName} ${lastName}`.trim() || 'User';
-
-            // Now showing full name in header!
+            const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'User';
             document.getElementById('fullUserName').textContent = fullName;
-            document.getElementById('firstNameDisplay').textContent = firstName;
+            document.getElementById('firstNameDisplay').textContent = user.firstName || 'User';
             document.getElementById('fullNameDisplay').textContent = fullName;
             document.getElementById('emailDisplay').textContent = user.email || 'No email';
             document.getElementById('userIdDisplay').textContent = user.id;
 
             await loadMyGroups();
+            initMasterCalendar(user);
         });
 
         async function loadMyGroups() {
             const user = JSON.parse(localStorage.getItem('user'));
             try {
-                const res = await fetch('/webproject/api/groups/my?user=' + encodeURIComponent(JSON.stringify(user)));
+                const res = await fetch('api/groups/my?user=' + encodeURIComponent(JSON.stringify(user)));
                 const data = await res.json();
 
                 const tbody = document.getElementById('groupsTableBody');
@@ -258,10 +242,7 @@
                             ${escape((g.description || 'No description').substring(0,60))}${g.description?.length > 60 ? '...' : ''}
                         </td>
                         <td>
-                            <button class="leave-btn"
-                                    data-groupid="${g.groupId}"
-                                    data-groupname="${escape(g.groupName)}"
-                                    onclick="openLeaveModalFromButton(this)">
+                            <button class="leave-btn" data-groupid="${g.groupId}" data-groupname="${escape(g.groupName)}" onclick="openLeaveModalFromButton(this)">
                                 Leave
                             </button>
                         </td>
@@ -274,12 +255,63 @@
             }
         }
 
+        function initMasterCalendar(user) {
+            const calendarEl = document.getElementById('masterCalendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,listWeek' },
+                height: 'auto',
+
+                events: async function(fetchInfo, successCallback) {
+                    try {
+                        const res = await fetch(`api/groups/events/?user=${encodeURIComponent(JSON.stringify(user))}`);
+                        if (!res.ok) throw new Error();
+                        const events = await res.json();
+
+                        // Fix the title so it doesn't include the group name
+                        events.forEach(event => {
+                            if (event.title.includes(' (')) {
+                                const cleanTitle = event.title.split(' (')[0];
+                                event.originalTitle = cleanTitle; // store clean title
+                            } else {
+                                event.originalTitle = event.title;
+                            }
+                        });
+
+                        successCallback(events);
+                    } catch (err) {
+                        showToast('Failed to load events', 'error');
+                        successCallback([]);
+                    }
+                },
+
+                eventClick: function(info) {
+                    const rawTitle = info.event.title;
+                    let cleanTitle = rawTitle;
+                    let groupName = info.event.extendedProps.groupName || 'Unknown Group';
+
+                    // Extract clean title if it was concatenated
+                    if (rawTitle.includes(' (')) {
+                        cleanTitle = rawTitle.split(' (')[0];
+                        const possibleGroup = rawTitle.match(/\(([^)]+)\)/);
+                        if (possibleGroup) groupName = possibleGroup[1];
+                    }
+
+                    document.getElementById('modalGroupName').textContent = groupName;
+                    document.getElementById('modalEventTitle').textContent = cleanTitle;
+                    document.getElementById('modalEventDescription').textContent = info.event.extendedProps.description || 'No description';
+                    document.getElementById('modalEventStart').textContent = info.event.start.toLocaleString();
+                    document.getElementById('modalEventEnd').textContent = info.event.end ? info.event.end.toLocaleString() : 'No end time';
+                    document.getElementById('eventDetailsModal').classList.add('active');
+                }
+            });
+            calendar.render();
+        }
+
         async function leaveGroup(groupId) {
             const user = JSON.parse(localStorage.getItem('user'));
-            console.log('Leaving → userId:', user.id, 'groupId:', groupId);
-
             try {
-                const res = await fetch('/webproject/api/groups/leave', {
+                const res = await fetch('api/groups/leave', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: `userId=${user.id}&groupId=${groupId}`
@@ -308,8 +340,10 @@
             return div.innerHTML;
         }
 
-        document.getElementById('modalOverlay').addEventListener('click', e => {
-            if (e.target === document.getElementById('modalOverlay')) closeModal();
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', e => {
+                if (e.target === overlay) overlay.classList.remove('active');
+            });
         });
     </script>
 </body>
