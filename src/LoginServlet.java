@@ -1,3 +1,4 @@
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,11 +22,10 @@ public class LoginServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         String email = request.getParameter("email");
-        // String password = request.getParameter("password");  // ignored for now
 
         if (email == null || email.trim().isEmpty()) {
             response.setStatus(400);
-            response.getWriter().write("{\"message\": \"Email is required\"}");
+            response.getWriter().write("{\"success\":false,\"message\": \"Email is required\"}");
             return;
         }
 
@@ -40,21 +40,26 @@ public class LoginServlet extends HttpServlet {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                // User found → create session
-                HttpSession session = request.getSession(true); // true = create if not exists
-                session.setMaxInactiveInterval(30 * 60); // 30 minutes
+                int userId = rs.getInt("UserID");
+                String firstName = rs.getString("First_name");
+                String lastName = rs.getString("Last_name");
+                String userEmail = rs.getString("Email");
 
-                session.setAttribute("userId", rs.getInt("UserID"));
-                session.setAttribute("firstName", rs.getString("First_name"));
-                session.setAttribute("lastName", rs.getString("Last_name"));
-                session.setAttribute("email", rs.getString("Email"));
+                // Store in session
+                HttpSession session = request.getSession(true);
+                session.setMaxInactiveInterval(30 * 60);
+                session.setAttribute("userId", userId);
+                session.setAttribute("firstName", firstName);
+                session.setAttribute("lastName", lastName);
+                session.setAttribute("email", userEmail);
 
-                // Send back user info (for localStorage if you want)
+                // SEND lastName TO FRONTEND TOO!
                 String jsonResponse = String.format(
-                    "{\"success\": true, \"user\": {\"id\": %d, \"firstName\": \"%s\", \"email\": \"%s\"}}",
-                    rs.getInt("UserID"),
-                    rs.getString("First_name"),
-                    rs.getString("Email")
+                    "{\"success\": true, \"user\": {\"id\": %d, \"firstName\": \"%s\", \"lastName\": \"%s\", \"email\": \"%s\"}}",
+                    userId,
+                    escape(firstName),
+                    escape(lastName),
+                    escape(userEmail)
                 );
 
                 response.setStatus(200);
@@ -62,15 +67,20 @@ public class LoginServlet extends HttpServlet {
 
             } else {
                 response.setStatus(401);
-                response.getWriter().write("{\"message\": \"Email not found. Try cory@example.com or add yourself to the DB.\"}");
+                response.getWriter().write("{\"success\":false,\"message\": \"Email not found. Try cory@example.com or add yourself to the DB.\"}");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
             response.setStatus(500);
-            response.getWriter().write("{\"message\": \"Server error. Check console.\"}");
+            response.getWriter().write("{\"success\":false,\"message\": \"Server error. Check console.\"}");
         } finally {
             DBConnection.closeConnection();
         }
+    }
+
+    private String escape(String s) {
+        if (s == null) return "";
+        return s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n");
     }
 }

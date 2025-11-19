@@ -1,173 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Create Study Group – Study Sesh</title>
-<style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        background: #f8f9fa;
-        color: #333;
-        line-height: 1.6;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 Create Study Group | StudySessions</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8f9fa; color: #333; line-height: 1.6; }
+        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem 0; position: fixed; width: 100%; top: 0; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+        nav { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.8rem; font-weight: bold; }
+        .nav-links { display: flex; gap: 2.5rem; align-items: center; }
+        .nav-links a { color: white; text-decoration: none; font-weight: 500; font-size: 1.05rem; }
+        .nav-links a:hover { opacity: 0.8; }
+        .nav-links a.active { opacity: 1; font-weight: 700; }
 
-    header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 1.5rem 0;
-        position: fixed;
-        width: 100%;
-        top: 0;
-        z-index: 1000;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-    }
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            font-size: 0.95rem;
+        }
+        .user-greeting {
+            text-align: right;
+        }
+        .user-greeting .greeting {
+            font-style: italic;
+            margin-bottom: 2px;
+        }
+        .user-greeting span#fullUserName { font-weight: 600; color: white; }
+        .user-greeting .dashboard-link {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            border-bottom: 1px dotted rgba(255,255,255,0.6);
+            transition: all 0.2s;
+        }
+        .user-greeting .dashboard-link:hover {
+            color: white;
+            border-bottom-color: white;
+        }
 
-    nav {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        position: relative;
-    }
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .logout-btn:hover {
+            background: white;
+            color: #667eea;
+        }
 
-    .logo {
-        font-size: 1.8rem;
-        font-weight: bold;
-        letter-spacing: 0.5px;
-    }
+        main {
+            padding: 140px 2rem 4rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
 
-    .nav-links {
-        display: flex;
-        align-items: center;
-        gap: 2.5rem;
-    }
+        h1 { text-align: center; font-size: 2.8rem; color: #667eea; margin-bottom: 1.5rem; }
+        p.subtitle { text-align: center; font-size: 1.2rem; color: #666; margin-bottom: 3rem; }
 
-    .nav-links a {
-        color: white;
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 1.05rem;
-        transition: opacity 0.2s;
-    }
+        .create-form {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
 
-    .nav-links a:hover { opacity: 0.8; }
+        label { display: block; margin-bottom: 0.6rem; font-weight: 600; color: #444; }
+        input, select, textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            transition: border 0.3s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102,126,234,0.15);
+        }
+        textarea { min-height: 120px; resize: vertical; }
 
-    /* User Greeting – smaller + italicized */
-    .user-area {
-        display: flex;
-        align-items: center;
-        gap: 0.8rem;
-        font-size: 0.95rem;
-        font-style: italic;
-        color: rgba(255, 255, 255, 0.95);
-    }
+        .submit-btn {
+            background: #667eea;
+            color: white;
+            padding: 16px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            box-shadow: 0 8px 25px rgba(102,126,234,0.3);
+        }
+        .submit-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(102,126,234,0.4); }
 
-    .user-area span#userName {
-        font-weight: 600;
-        color: white;
-    }
+        .success-message {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.3rem;
+            margin-top: 2rem;
+            border: 1px solid #c3e6cb;
+        }
 
-    .logout-link {
-        color: rgba(255, 255, 255, 0.75);
-        font-size: 0.85rem;
-        text-decoration: none;
-        font-style: italic;
-    }
-
-    .logout-link:hover {
-        color: white;
-        text-decoration: underline;
-    }
-
-    main {
-        padding: 140px 2rem 4rem;
-        max-width: 700px;
-        margin: 0 auto;
-    }
-
-    h1 { text-align: center; font-size: 2.8rem; color: #667eea; margin-bottom: 1.5rem; }
-    p.subtitle { text-align: center; font-size: 1.2rem; color: #666; margin-bottom: 3rem; }
-
-    .create-form {
-        background: white;
-        padding: 2.5rem;
-        border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    }
-
-    label { display: block; margin-bottom: 0.6rem; font-weight: 600; color: #444; }
-    input, select, textarea {
-        width: 100%;
-        padding: 14px;
-        border: 2px solid #e0e0e0;
-        border-radius: 12px;
-        font-size: 1.1rem;
-        margin-bottom: 1.5rem;
-        transition: border 0.3s;
-    }
-    input:focus, select:focus, textarea:focus {
-        outline: none;
-        border-color: #667eea;
-        box-shadow: 0 0 0 4px rgba(102,126,234,0.15);
-    }
-    textarea { min-height: 120px; resize: vertical; }
-
-    .submit-btn {
-        background: #667eea;
-        color: white;
-        padding: 16px 40px;
-        border: none;
-        border-radius: 50px;
-        font-size: 1.2rem;
-        font-weight: bold;
-        cursor: pointer;
-        width: 100%;
-        transition: all 0.3s;
-        box-shadow: 0 8px 25px rgba(102,126,234,0.3);
-    }
-    .submit-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(102,126,234,0.4); }
-
-    .success-message {
-        display: none;
-        background: #d4edda;
-        color: #155724;
-        padding: 1.5rem;
-        border-radius: 12px;
-        text-align: center;
-        font-size: 1.3rem;
-        margin-top: 2rem;
-        border: 1px solid #c3e6cb;
-    }
-
-    .back-link {
-        display: block;
-        text-align: center;
-        margin-top: 2rem;
-        color: #667eea;
-        text-decoration: none;
-        font-weight: 600;
-    }
-    .back-link:hover { text-decoration: underline; }
-</style>
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 2rem;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+    </style>
 </head>
 <body>
 
 <header>
     <nav>
-        <div class="logo">Study Sesh</div>
-
+        <div class="logo">📚 StudySessions</div>
         <div class="nav-links">
             <a href="searchForm.html">Find Groups</a>
             <a href="myGroups.html">My Groups</a>
             <a href="createGroup.html">Create Group</a>
-            <!-- User Greeting (smaller + italicized) -->
+
             <div class="user-area">
-                Hi, <span id="userName">Guest</span>!
-                <a href="#" onclick="logout()" class="logout-link">(Logout)</a>
+                <div class="user-greeting">
+                    <div class="greeting">Hi, <span id="fullUserName">User</span>!</div>
+                    <a href="userDashboard.html" class="dashboard-link">My Dashboard</a>
+                </div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
             </div>
         </div>
     </nav>
@@ -209,24 +184,24 @@
     </form>
 
     <div class="success-message" id="successMessage">
-        Group created successfully! Redirecting to your groups...
-    </div>
+        </div>
 
     <a href="searchForm.html" class="back-link">Back to Search</a>
 </main>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        const nameSpan = document.getElementById('userName');
-
-        if (user && user.firstName) {
-            nameSpan.textContent = user.firstName;
-        } else {
-            if (!window.location.pathname.includes('login.html')) {
-                window.location.href = 'login.html';
-            }
+        const user = JSON.parse(localStorage.getItem('user') || 'null');
+        if (!user?.id) {
+            window.location.href = 'login.html';
+            return;
         }
+
+        // Show full name in header
+        const firstName = user.firstName || 'User';
+        const lastName = user.lastName || '';
+        const fullName = `${firstName} ${lastName}`.trim() || 'User';
+        document.getElementById('fullUserName').textContent = fullName;
     });
 
     document.getElementById('createGroupForm').addEventListener('submit', async function(e) {
@@ -254,7 +229,7 @@
         submitBtn.textContent = 'Creating...';
 
         try {
-            const response = await fetch('api/groups/create', {
+            const response = await fetch('/webproject/api/groups/create', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: new URLSearchParams(data)
@@ -263,10 +238,7 @@
             const result = await response.json();
 
             if (result.success) {
-                // Hide the form
                 document.getElementById('createGroupForm').style.display = 'none';
-                
-                // Show success message permanently
                 const successMsg = document.getElementById('successMessage');
                 successMsg.style.display = 'block';
                 successMsg.innerHTML = `
@@ -276,10 +248,7 @@
                     &nbsp; &nbsp; 
                     <a href="myGroups.html" style="color: #667eea; font-weight: 600;">View My Groups →</a>
                 `;
-                
-                // Optional: scroll to top so user sees the message
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-           
             } else {
                 alert('Error: ' + result.message);
                 submitBtn.disabled = false;
@@ -295,7 +264,7 @@
 
     function logout() {
         localStorage.removeItem('user');
-        fetch('api/auth/logout', { method: 'GET' }).finally(() => {
+        fetch('/webproject/api/auth/logout', { method: 'GET' }).finally(() => {
             window.location.href = 'login.html';
         });
     }

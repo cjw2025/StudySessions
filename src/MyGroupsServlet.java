@@ -1,3 +1,4 @@
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -9,9 +10,13 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @WebServlet("/api/groups/my")
 public class MyGroupsServlet extends HttpServlet {
+
+    private static final Pattern ID_PATTERN = Pattern.compile("\"id\"\\s*:\\s*(\\d+)");
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -21,9 +26,8 @@ public class MyGroupsServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
 
-        // Get user from localStorage (sent from frontend)
         String userJson = request.getParameter("user");
-        if (userJson == null || userJson.isEmpty()) {
+        if (userJson == null || userJson.trim().isEmpty()) {
             response.setStatus(401);
             out.print("{\"success\":false,\"message\":\"Not logged in\"}");
             return;
@@ -31,10 +35,14 @@ public class MyGroupsServlet extends HttpServlet {
 
         int userId;
         try {
-            userId = Integer.parseInt(userJson.split("\"id\":")[1].split(",")[0]);
+            Matcher matcher = ID_PATTERN.matcher(userJson);
+            if (!matcher.find()) {
+                throw new Exception("User ID not found in JSON");
+            }
+            userId = Integer.parseInt(matcher.group(1));
         } catch (Exception e) {
             response.setStatus(400);
-            out.print("{\"success\":false,\"message\":\"Invalid user\"}");
+            out.print("{\"success\":false,\"message\":\"Invalid user data\"}");
             return;
         }
 
@@ -43,26 +51,26 @@ public class MyGroupsServlet extends HttpServlet {
             conn = DBConnection.getDBConnection();
 
             String sql = """
-            	    SELECT 
-            	        sg.group_id,
-            	        sg.group_name,
-            	        sg.class_name,
-            	        sg.class_code,
-            	        sg.subject,
-            	        sg.descripton,
-            	        COUNT(sgm.user_id) as member_count
-            	    FROM Study_groups sg
-            	    JOIN Study_group_membership sgm ON sg.group_id = sgm.group_id
-            	    WHERE sgm.user_id = ?
-            	    GROUP BY 
-            	        sg.group_id,
-            	        sg.group_name,
-            	        sg.class_name,
-            	        sg.class_code,
-            	        sg.subject,
-            	        sg.descripton
-            	    ORDER BY sg.class_code, sg.group_name
-            	    """;
+                SELECT 
+                    sg.group_id,
+                    sg.group_name,
+                    sg.class_name,
+                    sg.class_code,
+                    sg.subject,
+                    sg.descripton,
+                    COUNT(sgm.user_id) as member_count
+                FROM Study_groups sg
+                JOIN Study_group_membership sgm ON sg.group_id = sgm.group_id
+                WHERE sgm.user_id = ?
+                GROUP BY 
+                    sg.group_id,
+                    sg.group_name,
+                    sg.class_name,
+                    sg.class_code,
+                    sg.subject,
+                    sg.descripton
+                ORDER BY sg.class_code, sg.group_name
+                """;
 
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, userId);
@@ -70,8 +78,8 @@ public class MyGroupsServlet extends HttpServlet {
 
             StringBuilder json = new StringBuilder();
             json.append("{\"success\":true,\"groups\":[");
-            boolean first = true;
 
+            boolean first = true;
             while (rs.next()) {
                 if (!first) json.append(",");
                 first = false;
@@ -101,6 +109,9 @@ public class MyGroupsServlet extends HttpServlet {
 
     private String escape(String s) {
         if (s == null) return "";
-        return s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n");
+        return s.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r");
     }
 }

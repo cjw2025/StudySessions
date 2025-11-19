@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Study Groups – Study Sesh</title>
+    <title>📚 My Groups | StudySessions</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8f9fa; color: #333; line-height: 1.6; }
@@ -13,10 +13,49 @@
         .nav-links { display: flex; align-items: center; gap: 2.5rem; }
         .nav-links a { color: white; text-decoration: none; font-weight: 500; font-size: 1.05rem; }
         .nav-links a:hover { opacity: 0.8; }
-        .user-area { font-size: 0.95rem; font-style: italic; color: rgba(255,255,255,0.95); }
-        .user-area span#userName { font-weight: 600; color: white; }
-        .logout-link { color: rgba(255,255,255,0.75); font-size: 0.85rem; margin-left: 10px; }
-        .logout-link:hover { color: white; text-decoration: underline; }
+        .nav-links a.active { opacity: 1; font-weight: 700; }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            font-size: 0.95rem;
+        }
+        .user-greeting {
+            text-align: right;
+        }
+        .user-greeting .greeting {
+            font-style: italic;
+            margin-bottom: 2px;
+        }
+        .user-greeting span#fullUserName { font-weight: 600; color: white; }
+        .user-greeting .dashboard-link {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            border-bottom: 1px dotted rgba(255,255,255,0.6);
+            transition: all 0.2s;
+        }
+        .user-greeting .dashboard-link:hover {
+            color: white;
+            border-bottom-color: white;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+        .logout-btn:hover {
+            background: white;
+            color: #667eea;
+        }
 
         main { padding: 140px 2rem 4rem; max-width: 1000px; margin: 0 auto; }
         h1 { text-align: center; color: #667eea; margin-bottom: 2rem; font-size: 2.5rem; }
@@ -39,14 +78,18 @@
 
 <header>
     <nav>
-        <div class="logo">Study Sesh</div>
+        <div class="logo">📚 StudySessions</div>
         <div class="nav-links">
             <a href="searchForm.html">Find Groups</a>
             <a href="myGroups.html">My Groups</a>
             <a href="createGroup.html">Create Group</a>
+
             <div class="user-area">
-                Hi, <span id="userName">Guest</span>!
-                <a href="#" onclick="logout()" class="logout-link">(Logout)</a>
+                <div class="user-greeting">
+                    <div class="greeting">Hi, <span id="fullUserName">User</span>!</div>
+                    <a href="userDashboard.html" class="dashboard-link">My Dashboard</a>
+                </div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
             </div>
         </div>
     </nav>
@@ -54,11 +97,12 @@
 
 <main>
     <h1>My Study Groups</h1>
+
     <div id="groupsContainer" class="groups-container">
         <!-- Groups will be loaded here dynamically -->
         <div class="no-groups">
             Loading your groups...<br><br>
-            <span style="font-size: 2rem;">(spinner)</span>
+            <span style="font-size: 2rem;">⏳</span>
         </div>
     </div>
 </main>
@@ -66,17 +110,22 @@
 <script>
     document.addEventListener('DOMContentLoaded', async () => {
         const user = JSON.parse(localStorage.getItem('user'));
-        const nameSpan = document.getElementById('userName');
+        const nameSpan = document.getElementById('fullUserName');
         const container = document.getElementById('groupsContainer');
 
         if (!user || !user.firstName) {
             window.location.href = 'login.html';
             return;
         }
-        nameSpan.textContent = user.firstName;
+
+        // Show full name in header
+        const firstName = user.firstName || 'User';
+        const lastName = user.lastName || '';
+        const fullName = `${firstName} ${lastName}`.trim() || 'User';
+        nameSpan.textContent = fullName;
 
         try {
-            const response = await fetch('api/groups/my?user=' + encodeURIComponent(JSON.stringify(user)));
+            const response = await fetch('/webproject/api/groups/my?user=' + encodeURIComponent(JSON.stringify(user)));
             const data = await response.json();
 
             if (data.success && data.groups.length > 0) {
@@ -110,7 +159,9 @@
 
     function logout() {
         localStorage.removeItem('user');
-        fetch('api/auth/logout').finally(() => window.location.href = 'login.html');
+        fetch('/webproject/api/auth/logout', { method: 'GET' }).finally(() => {
+            window.location.href = 'login.html';
+        });
     }
 </script>
 
