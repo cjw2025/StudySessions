@@ -3,741 +3,392 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Groups | Study Sesh</title>
+    <title>📚 My Groups | StudySessions</title>
 
-    <!-- FullCalendar CSS and JS from CDN -->
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-            background: #f8f9fa; 
-            color: #333; 
-            line-height: 1.6; 
-        }
-        
-        header { 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-            color: white; 
-            padding: 1.5rem 0; 
-            position: fixed; 
-            width: 100%; 
-            top: 0; 
-            z-index: 1000; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15); 
-        }
-        
-        nav { 
-            max-width: 1200px; 
-            margin: 0 auto; 
-            padding: 0 2rem; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-        }
-        
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8f9fa; color: #333; line-height: 1.6; }
+        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem 0; position: fixed; width: 100%; top: 0; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+        nav { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
         .logo { font-size: 1.8rem; font-weight: bold; }
-        
-        .nav-links { 
-            display: flex; 
-            gap: 2.5rem; 
-            align-items: center; 
-        }
-        
-        .nav-links a { 
-            color: white; 
-            text-decoration: none; 
-            font-weight: 500; 
-            font-size: 1.05rem; 
-            transition: opacity 0.2s;
-        }
-        
+        .nav-links { display: flex; gap: 2.5rem; align-items: center; }
+        .nav-links a { color: white; text-decoration: none; font-weight: 500; font-size: 1.05rem; transition: opacity 0.2s; }
         .nav-links a:hover { opacity: 0.8; }
         .nav-links a.active { opacity: 1; font-weight: 700; }
 
-        .user-area {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            font-size: 0.95rem;
-            font-style: italic;
-            color: rgba(255, 255, 255, 0.95);
-        }
-
-        .user-area span#userName {
-            font-weight: 600;
-            color: white;
-        }
-
-        .logout-link {
-            color: rgba(255, 255, 255, 0.75);
-            font-size: 0.85rem;
-            text-decoration: none;
-            font-style: italic;
-        }
-
-        .logout-link:hover {
-            color: white;
-            text-decoration: underline;
-        }
+        .user-area { display: flex; align-items: center; gap: 1.5rem; font-size: 0.95rem; }
+        .user-greeting { text-align: right; }
+        .user-greeting .greeting { font-style: italic; margin-bottom: 2px; }
+        .user-greeting span#fullUserName { font-weight: 600; color: white; }
+        .user-greeting .dashboard-link { font-size: 0.9rem; color: rgba(255,255,255,0.9); text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,0.6); transition: all 0.2s; }
+        .user-greeting .dashboard-link:hover { color: white; border-bottom-color: white; }
+        .logout-btn { background: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 8px 20px; border-radius: 5px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .logout-btn:hover { background: white; color: #667eea; }
 
         main { padding: 140px 2rem 4rem; max-width: 1200px; margin: 0 auto; }
         h1 { text-align: center; color: #667eea; margin-bottom: 2rem; font-size: 2.8rem; }
+        .groups-container { display: flex; flex-direction: column; gap: 2.5rem; }
+        .group-card { background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); overflow: hidden; }
+        .group-header { padding: 1.8rem; background: linear-gradient(135deg, #667eea20 0%, transparent 100%); }
+        .group-info h3 { color: #667eea; font-size: 1.6rem; margin-bottom: 0.5rem; }
+        .group-info .badge { display: inline-block; background: #667eea; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-right: 0.8rem; }
+        .group-detail { margin: 0.4rem 0; color: #555; font-size: 0.98rem; }
+        .group-detail strong { color: #333; margin-right: 0.3rem; }
+        .calendar-controls { display: flex; justify-content: space-between; align-items: center; padding: 0 1.8rem 1rem; }
+        .calendar-controls h4 { color: #333; font-size: 1.3rem; }
+        .add-event-btn { background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .add-event-btn:hover { background: #5568d3; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.3); }
+        .calendar-wrapper { padding: 0 1.8rem 1.8rem; }
+        .no-groups { text-align: center; color: #888; font-size: 1.2rem; padding: 3rem; background: white; border-radius: 12px; }
 
-        .groups-container { 
-            display: flex;
-            flex-direction: column;
-            gap: 2rem; 
-            margin-bottom: 3rem; 
-        }
-        
-        .group-card {
-            background: white; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            overflow: hidden;
-            transition: box-shadow 0.2s;
-        }
-        
-        .group-card:hover { 
-            box-shadow: 0 8px 25px rgba(102,126,234,0.15);
-        }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9998; align-items: center; justify-content: center; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 520px; width: 90%; }
+        .modal h3 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #333; }
+        .modal .group-name { color: #667eea; font-weight: 600; font-size: 1rem; margin-bottom: 1rem; }
+        .modal p { color: #555; margin-bottom: 1.5rem; line-height: 1.5; text-align: center; }
+        .modal-buttons { display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; }
+        .modal-btn { padding: 10px 24px; border: none; border-radius: 50px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .modal-btn.cancel { background: #e5e7eb; color: #374151; }
+        .modal-btn.cancel:hover { background: #d1d5db; }
+        .modal-btn.delete { background: #ef4444; color: white; }
+        .modal-btn.delete:hover { background: #dc2626; }
+        .modal-btn.submit { background: #667eea; color: white; }
+        .modal-btn.submit:hover { background: #5568d3; transform: translateY(-2px); }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; color: #555; font-weight: 600; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px 14px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #667eea; }
 
-        .group-header {
-            padding: 1.8rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background 0.2s;
-        }
-
-        .group-header:hover {
-            background: #f8f9fa;
-        }
-
-        .group-info h3 { 
-            color: #667eea; 
-            margin-bottom: 0.5rem; 
-            font-size: 1.4rem; 
-        }
-        
-        .group-info .group-detail { 
-            margin: 0.3rem 0; 
-            color: #555; 
-            font-size: 0.95rem;
-        }
-        
-        .group-info .group-detail strong {
-            color: #333;
-            margin-right: 0.3rem;
-        }
-        
-        .group-info .badge {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-top: 0.5rem;
-        }
-
-        .expand-icon {
-            font-size: 1.5rem;
-            color: #667eea;
-            transition: transform 0.3s;
-        }
-
-        .expand-icon.expanded {
-            transform: rotate(180deg);
-        }
-
-        .group-calendar-section {
-            display: none;
-            padding: 0 1.8rem 1.8rem;
-            border-top: 1px solid #e0e0e0;
-        }
-
-        .group-calendar-section.active {
-            display: block;
-        }
-
-        .calendar-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding-top: 1rem;
-        }
-
-        .calendar-controls h4 {
-            color: #333;
-            font-size: 1.2rem;
-        }
-
-        .add-event-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .add-event-btn:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102,126,234,0.3);
-        }
-
-        .calendar-wrapper {
-            margin-top: 1rem;
-        }
-        
-        .no-groups { 
-            text-align: center; 
-            color: #888; 
-            font-size: 1.2rem; 
-            padding: 3rem; 
-            background: white; 
-            border-radius: 12px; 
-        }
-        
-        .no-groups a {
-            color: #667eea;
-            font-weight: 600;
-            text-decoration: none;
-        }
-        
-        .no-groups a:hover {
-            text-decoration: underline;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: #666;
-        }
-
-        .error-message {
-            background: #fee;
-            color: #c33;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-            border-left: 4px solid #c33;
-        }
-
-        /* Modal Styles */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 9998;
-            animation: fadeIn 0.2s ease;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal {
-            background: white;
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            color: #333;
-        }
-
-        .form-group {
-            margin-bottom: 1.2rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #555;
-            font-weight: 600;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px 14px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: inherit;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .form-group textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-            margin-top: 1.5rem;
-        }
-
-        .modal-btn {
-            padding: 10px 24px;
-            border: none;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .modal-btn.cancel {
-            background: #e5e7eb;
-            color: #374151;
-        }
-
-        .modal-btn.cancel:hover {
-            background: #d1d5db;
-        }
-
-        .modal-btn.submit {
-            background: #667eea;
-            color: white;
-        }
-
-        .modal-btn.submit:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-        }
-
-        /* Toast Notifications */
-        .toast-container {
-            position: fixed;
-            top: 100px;
-            right: 20px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .toast {
-            background: white;
-            padding: 16px 24px;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            min-width: 300px;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        .toast.success {
-            border-left: 4px solid #10b981;
-        }
-
-        .toast.error {
-            border-left: 4px solid #ef4444;
-        }
-
-        .toast-icon {
-            font-size: 20px;
-        }
-
-        .toast.success .toast-icon {
-            color: #10b981;
-        }
-
-        .toast.error .toast-icon {
-            color: #ef4444;
-        }
+        .toast-container { position: fixed; top: 100px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: white; padding: 16px 24px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px; min-width: 300px; animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .toast.success { border-left: 4px solid #10b981; }
+        .toast.error { border-left: 4px solid #ef4444; }
+        .toast-icon { font-size: 20px; }
+        .toast.success .toast-icon { color: #10b981; }
+        .toast.error .toast-icon { color: #ef4444; }
     </style>
 </head>
 <body>
 
-<!-- Toast Container -->
-<div class="toast-container" id="toastContainer"></div>
+    <div class="toast-container" id="toastContainer"></div>
 
-<!-- Add Event Modal -->
-<div class="modal-overlay" id="eventModal">
-    <div class="modal">
-        <h3>Add Study Event</h3>
-        <form id="eventForm">
-            <div class="form-group">
-                <label for="eventTitle">Event Title *</label>
-                <input type="text" id="eventTitle" required placeholder="e.g., Group Study Session">
-            </div>
-
-            <div class="form-group">
-                <label for="eventDescription">Description</label>
-                <textarea id="eventDescription" placeholder="What will you study?"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="eventStart">Start Date & Time *</label>
-                <input type="datetime-local" id="eventStart" required>
-            </div>
-
-            <div class="form-group">
-                <label for="eventEnd">End Date & Time</label>
-                <input type="datetime-local" id="eventEnd">
-            </div>
-
-            <div class="form-group">
-                <label for="eventColor">Color</label>
-                <input type="color" id="eventColor" value="#667eea">
-            </div>
-
-            <div class="modal-buttons">
-                <button type="button" class="modal-btn cancel" onclick="closeEventModal()">Cancel</button>
-                <button type="submit" class="modal-btn submit">Add Event</button>
-            </div>
-        </form>
+    <!-- ADD EVENT MODAL -->
+    <div class="modal-overlay" id="eventModal">
+        <div class="modal">
+            <h3>Add Study Event</h3>
+            <form id="eventForm">
+                <div class="form-group">
+                    <label for="eventTitle">Event Title *</label>
+                    <input type="text" id="eventTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventDescription">Description</label>
+                    <textarea id="eventDescription"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="eventStart">Start Date & Time *</label>
+                    <input type="datetime-local" id="eventStart" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventEnd">End Date & Time</label>
+                    <input type="datetime-local" id="eventEnd">
+                </div>
+                <div class="form-group">
+                    <label for="eventColor">Color</label>
+                    <input type="color" id="eventColor" value="#667eea">
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="modal-btn cancel" onclick="closeEventModal()">Cancel</button>
+                    <button type="submit" class="modal-btn submit">Add Event</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<header>
-    <nav>
-        <div class="logo">Study Sesh</div>
-        <div class="nav-links">
-            <a href="searchForm.html">Find Groups</a>
-            <a href="myGroups.html" class="active">My Groups</a>
-            <a href="createGroup.html">Create Group</a>
+    <!-- EDIT EVENT MODAL -->
+    <div class="modal-overlay" id="editEventModal">
+        <div class="modal">
+            <h3 id="editEventTitleDisplay"></h3>
+            <div class="group-name" id="editEventGroupName"></div>
+            <form id="editEventForm">
+                <input type="hidden" id="editEventId">
+                <div class="form-group"><label for="editTitle">Title *</label><input type="text" id="editTitle" required></div>
+                <div class="form-group"><label for="editDescription">Description</label><textarea id="editDescription"></textarea></div>
+                <div class="form-group"><label for="editStart">Start *</label><input type="datetime-local" id="editStart" required></div>
+                <div class="form-group"><label for="editEnd">End</label><input type="datetime-local" id="editEnd"></div>
+                <div class="form-group"><label for="editColor">Color</label><input type="color" id="editColor"></div>
+                <div class="modal-buttons">
+                    <button type="button" class="modal-btn cancel" onclick="closeEditEventModal()">Cancel</button>
+                    <button type="button" class="modal-btn delete" onclick="openDeleteConfirmModal()">Delete Event</button>
+                    <button type="submit" class="modal-btn submit">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-            <div class="user-area">
-                Hi, <span id="userName">Guest</span>!
-                <a href="#" onclick="logout()" class="logout-link">(Logout)</a>
+    <!-- DELETE CONFIRM MODAL -->
+    <div class="modal-overlay" id="deleteConfirmModal">
+        <div class="modal">
+            <h3>Delete Event?</h3>
+            <p>Are you sure you want to permanently delete this study event?</p>
+            <div class="modal-buttons">
+                <button type="button" class="modal-btn cancel" onclick="closeDeleteConfirmModal()">Cancel</button>
+                <button type="button" class="modal-btn delete" id="confirmDeleteBtn">Yes, Delete</button>
             </div>
         </div>
-    </nav>
-</header>
-
-<main>
-    <h1>My Study Groups</h1>
-
-    <div id="errorMessage" class="error-message" style="display: none;"></div>
-
-    <div id="groupsContainer" class="groups-container">
-        <div class="no-groups loading">Loading your groups...</div>
     </div>
-</main>
 
-<script>
-    let calendars = {};
-    let currentGroupId = null;
-    let userGroups = [];
+    <!-- HEADER -->
+    <header>
+        <nav>
+            <div class="logo">📚 StudySessions</div>
+            <div class="nav-links">
+                <a href="searchForm.html">Find Groups</a>
+                <a href="myGroups.html">My Groups</a>
+                <a href="createGroup.html">Create Group</a>
 
-    // Wait for FullCalendar to load, THEN run everything
-    window.addEventListener('load', async () => {
-        console.log('Page loaded, checking for user...');
-        
-        const userStr = localStorage.getItem('user');
-        console.log('User string from localStorage:', userStr);
-        
-        if (!userStr) {
-            console.log('No user found in localStorage, redirecting to login');
-            window.location.href = 'login.html';
-            return;
+                <div class="user-area">
+                    <div class="user-greeting">
+                        <div class="greeting">Hi, <span id="fullUserName">User</span>!</div>
+                        <a href="userDashboard.html" class="dashboard-link">My Dashboard</a>
+                    </div>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <h1>My Study Groups</h1>
+        <div id="groupsContainer" class="groups-container">
+            <div class="no-groups loading">Loading your groups...</div>
+        </div>
+    </main>
+
+    <script>
+        let calendars = {};
+        let currentGroupId = null;
+        let currentEventId = null;
+        let currentGroupName = '';
+
+        function formatDateForInput(date) {
+            if (!date) return '';
+            const d = new Date(date);
+            const offset = d.getTimezoneOffset() * 60000;
+            const local = new Date(d.getTime() - offset);
+            return local.toISOString().slice(0, 16);
         }
 
-        const user = JSON.parse(userStr);
-        console.log('Parsed user object:', user);
-        
-        if (!user || !user.id) {
-            console.log('User object missing or no ID, redirecting to login');
-            window.location.href = 'login.html';
-            return;
-        }
-
-        console.log('User authenticated:', user);
-
-        // Display user name
-        document.getElementById('userName').textContent = user.firstName || 'User';
-
-        // Load groups
-        await loadGroups();
-    });
-
-    async function loadGroups() {
-        const user = JSON.parse(localStorage.getItem('user'));
-        const container = document.getElementById('groupsContainer');
-        const errorDiv = document.getElementById('errorMessage');
-
-        try {
-            console.log('Fetching groups for user:', user.id);
-            
-            const response = await fetch(`api/groups/my?user=${encodeURIComponent(JSON.stringify(user))}`);
-            
-            console.log('Response status:', response.status);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        window.addEventListener('load', async () => {
+            const userStr = localStorage.getItem('user');
+            if (!userStr || !JSON.parse(userStr)?.id) {
+                window.location.href = 'login.html';
+                return;
             }
+            const user = JSON.parse(userStr);
 
-            const data = await response.json();
-            console.log('Groups data received:', data);
+            const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'User';
+            document.getElementById('fullUserName').textContent = fullName;
 
-            if (data.success && data.groups && data.groups.length > 0) {
-                userGroups = data.groups;
-                container.innerHTML = data.groups.map(group => `
-                    <div class="group-card" data-group-id="${group.groupId}">
-                        <div class="group-header" onclick="toggleCalendar(${group.groupId})">
-                            <div class="group-info">
-                                <h3>${escapeHtml(group.groupName)}</h3>
-                                <span class="badge">${escapeHtml(group.subject)}</span>
-                                <div class="group-detail">
-                                    <strong>Class:</strong> ${escapeHtml(group.className)} (${escapeHtml(group.classCode)})
+            await loadGroups();
+        });
+
+        async function loadGroups() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const container = document.getElementById('groupsContainer');
+
+            try {
+                const res = await fetch(`api/groups/my?user=${encodeURIComponent(JSON.stringify(user))}`);
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+
+                if (data.success && data.groups?.length > 0) {
+                    container.innerHTML = data.groups.map(group => `
+                        <div class="group-card">
+                            <div class="group-header">
+                                <div class="group-info">
+                                    <h3>${escapeHtml(group.groupName)} <span class="badge">${escapeHtml(group.subject)}</span></h3>
+                                    <div class="group-detail"><strong>Class:</strong> ${escapeHtml(group.className)} (${escapeHtml(group.classCode)})</div>
+                                    <div class="group-detail"><strong>Members:</strong> ${group.memberCount}</div>
+                                    ${group.description ? `<div class="group-detail" style="margin-top:0.5rem;font-style:italic;color:#666;">${escapeHtml(group.description)}</div>` : ''}
                                 </div>
-                                <div class="group-detail">
-                                    <strong>Members:</strong> ${group.memberCount}
-                                </div>
-                                ${group.description ? `
-                                    <div class="group-detail" style="margin-top: 0.5rem; font-style: italic; color: #666;">
-                                        ${escapeHtml(group.description)}
-                                    </div>
-                                ` : ''}
                             </div>
-                            <div class="expand-icon" id="icon-${group.groupId}">▼</div>
-                        </div>
-                        <div class="group-calendar-section" id="calendar-section-${group.groupId}">
                             <div class="calendar-controls">
                                 <h4>Study Calendar</h4>
-                                <button class="add-event-btn" onclick="openEventModal(${group.groupId}); event.stopPropagation();">
-                                    + Add Event
-                                </button>
+                                <button class="add-event-btn" onclick="openEventModal(${group.groupId}); event.stopPropagation();">+ Add Event</button>
                             </div>
                             <div class="calendar-wrapper" id="calendar-${group.groupId}"></div>
                         </div>
-                    </div>
-                `).join('');
-            } else {
-                container.innerHTML = `
-                    <div class="no-groups">
-                        <p>You haven't joined any study groups yet!</p>
-                        <p style="margin-top: 1rem;">
-                            <a href="searchForm.html">Find groups to join</a> or 
-                            <a href="createGroup.html">create your own</a>
-                        </p>
-                    </div>
-                `;
-            }
+                    `).join('');
 
-        } catch (error) {
-            console.error('Error loading groups:', error);
-            errorDiv.textContent = `Error loading groups: ${error.message}. Please refresh the page.`;
-            errorDiv.style.display = 'block';
-            
-            container.innerHTML = `
-                <div class="no-groups">
-                    <p>Unable to load study groups</p>
-                    <p style="margin-top: 1rem;">Check your connection and try refreshing the page</p>
-                </div>
-            `;
-        }
-    }
-
-    function toggleCalendar(groupId) {
-        const section = document.getElementById(`calendar-section-${groupId}`);
-        const icon = document.getElementById(`icon-${groupId}`);
-        
-        if (section.classList.contains('active')) {
-            section.classList.remove('active');
-            icon.classList.remove('expanded');
-        } else {
-            section.classList.add('active');
-            icon.classList.add('expanded');
-            
-            // Initialize calendar if not already done
-            if (!calendars[groupId]) {
-                initCalendar(groupId);
-            }
-        }
-    }
-
-    async function initCalendar(groupId) {
-        const calendarEl = document.getElementById(`calendar-${groupId}`);
-        
-        const calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,listWeek'
-            },
-            events: async function(info, successCallback, failureCallback) {
-                try {
-                    const user = JSON.parse(localStorage.getItem('user'));
-                    const response = await fetch(`api/groups/events/get?groupId=${groupId}&user=${encodeURIComponent(JSON.stringify(user))}`);
-                    
-                    if (!response.ok) {
-                        console.warn('Events API returned:', response.status);
-                        successCallback([]);
-                        return;
-                    }
-                    
-                    const events = await response.json();
-                    console.log('Events loaded for group', groupId, ':', events);
-                    successCallback(events);
-                } catch (error) {
-                    console.error('Error loading events:', error);
-                    successCallback([]);
+                    data.groups.forEach(g => initCalendar(g.groupId, g.groupName));
+                } else {
+                    container.innerHTML = `<div class="no-groups"><p>No groups yet!</p><p><a href="searchForm.html">Find groups</a> or <a href="createGroup.html">create one</a></p></div>`;
                 }
-            },
-            eventClick: function(info) {
-                alert(
-                    `${info.event.title}\n\n` +
-                    `${info.event.extendedProps.description || 'No description provided'}\n\n` +
-                    `Start: ${info.event.start.toLocaleString()}`
-                );
-            },
-            height: 'auto',
-            eventColor: '#667eea'
-        });
-        
-        calendar.render();
-        calendars[groupId] = calendar;
-    }
+            } catch (err) {
+                container.innerHTML = `<div class="no-groups">Unable to load groups. Please refresh.</div>`;
+            }
+        }
 
-    function openEventModal(groupId) {
-        currentGroupId = groupId;
-        document.getElementById('eventModal').classList.add('active');
-        
-        // Set default start time to current time rounded to next hour
-        const now = new Date();
-        now.setHours(now.getHours() + 1, 0, 0, 0);
-        document.getElementById('eventStart').value = now.toISOString().slice(0, 16);
-    }
+        function initCalendar(groupId, groupName) {
+            const calendarEl = document.getElementById(`calendar-${groupId}`);
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'listWeek',
+                headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,listWeek' },
+                displayEventTime: true,
+                eventTimeFormat: { hour: 'numeric', minute: '2-digit', meridiem: 'short' },
+                listDayFormat: { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' },
 
-    function closeEventModal() {
-        document.getElementById('eventModal').classList.remove('active');
-        document.getElementById('eventForm').reset();
-        currentGroupId = null;
-    }
+                events: async function(fetchInfo, successCallback) {
+                    const user = JSON.parse(localStorage.getItem('user'));
+                    const res = await fetch(`api/groups/events/get?groupId=${groupId}&user=${encodeURIComponent(JSON.stringify(user))}`);
+                    if (!res.ok) return successCallback([]);
+                    const events = await res.json();
+                    successCallback(events);
+                },
 
-    // Handle event form submission
-    document.getElementById('eventForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const user = JSON.parse(localStorage.getItem('user'));
-        const formData = {
-            user: JSON.stringify(user),
-            groupId: currentGroupId,
-            title: document.getElementById('eventTitle').value,
-            description: document.getElementById('eventDescription').value,
-            startDateTime: document.getElementById('eventStart').value,
-            endDateTime: document.getElementById('eventEnd').value,
-            color: document.getElementById('eventColor').value
-        };
+                eventClick: function(info) {
+                    currentEventId = info.event.id;
+                    currentGroupId = groupId;
+                    currentGroupName = groupName;
 
-        try {
-            const response = await fetch('api/groups/events/create', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams(formData)
+                    document.getElementById('editEventTitleDisplay').textContent = info.event.title;
+                    document.getElementById('editEventGroupName').textContent = `Group: ${groupName}`;
+
+                    document.getElementById('editEventId').value = info.event.id;
+                    document.getElementById('editTitle').value = info.event.title;
+                    document.getElementById('editDescription').value = info.event.extendedProps.description || '';
+                    document.getElementById('editColor').value = info.event.backgroundColor || '#667eea';
+
+                    document.getElementById('editStart').value = formatDateForInput(info.event.start);
+                    document.getElementById('editEnd').value = formatDateForInput(info.event.end);
+
+                    document.getElementById('editEventModal').classList.add('active');
+                },
+                height: 'auto'
+            });
+            calendar.render();
+            calendars[groupId] = calendar;
+        }
+
+        // Modal Controls
+        function openEventModal(id) { 
+            currentGroupId = id; 
+            document.getElementById('eventModal').classList.add('active');
+            const now = new Date(); 
+            now.setHours(now.getHours() + 1, 0, 0, 0);
+            document.getElementById('eventStart').value = now.toISOString().slice(0,16);
+        }
+        function closeEventModal() { document.getElementById('eventModal').classList.remove('active'); document.getElementById('eventForm').reset(); }
+        function closeEditEventModal() { document.getElementById('editEventModal').classList.remove('active'); }
+        function openDeleteConfirmModal() { closeEditEventModal(); document.getElementById('deleteConfirmModal').classList.add('active'); }
+        function closeDeleteConfirmModal() { document.getElementById('deleteConfirmModal').classList.remove('active'); }
+
+        // Add Event - FULLY WORKING
+        document.getElementById('eventForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const user = JSON.parse(localStorage.getItem('user'));
+            const formData = new URLSearchParams({
+                user: JSON.stringify(user),
+                groupId: currentGroupId,
+                title: document.getElementById('eventTitle').value,
+                description: document.getElementById('eventDescription').value,
+                startDateTime: document.getElementById('eventStart').value,
+                endDateTime: document.getElementById('eventEnd').value || '',
+                color: document.getElementById('eventColor').value
             });
 
-            const result = await response.json();
-
-            if (result.success) {
-                showToast('Event added successfully!', 'success');
-                closeEventModal();
-                
-                // Refresh the calendar
-                if (calendars[currentGroupId]) {
+            try {
+                const res = await fetch('api/groups/events/create', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, 
+                    body: formData 
+                });
+                const result = await res.json();
+                if (result.success) {
+                    showToast('Event added successfully!', 'success');
+                    closeEventModal();
                     calendars[currentGroupId].refetchEvents();
+                } else {
+                    showToast(result.message || 'Failed to add event', 'error');
                 }
-            } else {
-                showToast(result.message || 'Failed to add event', 'error');
+            } catch (err) {
+                showToast('Network error', 'error');
             }
-        } catch (error) {
-            console.error('Error adding event:', error);
-            showToast('Network error. Please try again.', 'error');
-        }
-    });
-
-    function showToast(message, type = 'info') {
-        const container = document.getElementById('toastContainer');
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-        
-        const icons = {
-            success: '✓',
-            error: '✕'
-        };
-        
-        toast.innerHTML = `
-            <span class="toast-icon">${icons[type]}</span>
-            <span class="toast-message">${message}</span>
-        `;
-        
-        container.appendChild(toast);
-        
-        setTimeout(() => {
-            toast.remove();
-        }, 3000);
-    }
-
-    function escapeHtml(text) {
-        if (!text) return '';
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    function logout() {
-        localStorage.removeItem('user');
-        fetch('api/auth/logout', { method: 'GET' }).finally(() => {
-            window.location.href = 'login.html';
         });
-    }
 
-    // Close modal when clicking outside
-    document.getElementById('eventModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeEventModal();
+        // Edit Event
+        document.getElementById('editEventForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const user = JSON.parse(localStorage.getItem('user'));
+            const formData = new URLSearchParams({
+                user: JSON.stringify(user),
+                eventId: document.getElementById('editEventId').value,
+                title: document.getElementById('editTitle').value,
+                description: document.getElementById('editDescription').value,
+                startDateTime: document.getElementById('editStart').value,
+                endDateTime: document.getElementById('editEnd').value || '',
+                color: document.getElementById('editColor').value
+            });
+
+            try {
+                const res = await fetch('api/groups/events/update', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, 
+                    body: formData 
+                });
+                const result = await res.json();
+                if (result.success) {
+                    showToast('Event updated!', 'success');
+                    closeEditEventModal();
+                    calendars[currentGroupId].refetchEvents();
+                } else {
+                    showToast(result.message || 'Update failed', 'error');
+                }
+            } catch (err) {
+                showToast('Network error', 'error');
+            }
+        });
+
+        // Delete Event
+        document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            try {
+                const res = await fetch('api/groups/events/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ user: JSON.stringify(user), eventId: currentEventId })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    showToast('Event deleted', 'success');
+                    closeDeleteConfirmModal();
+                    calendars[currentGroupId].refetchEvents();
+                } else {
+                    showToast(result.message || 'Delete failed', 'error');
+                }
+            } catch (err) {
+                showToast('Network error', 'error');
+            }
+        });
+
+        function showToast(msg, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span class="toast-icon">${type === 'success' ? '✓' : '✕'}</span><span>${msg}</span>`;
+            document.getElementById('toastContainer').appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
         }
-    });
-</script>
 
+        function escapeHtml(t) { if (!t) return ''; const div = document.createElement('div'); div.textContent = t; return div.innerHTML; }
+        function logout() { localStorage.removeItem('user'); fetch('api/auth/logout').finally(() => window.location.href = 'login.html'); }
+
+        document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === e.currentTarget) m.classList.remove('active'); }));
+    </script>
 </body>
 </html>

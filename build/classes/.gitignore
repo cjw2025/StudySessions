@@ -23,3 +23,5 @@
 /UserDAO.class
 /UtilProp.class
 /config.properties
+/DeleteEventServlet.class
+/UpdateEventServlet.class
