@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📚 StudySessions - Find Study Groups</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -18,7 +14,7 @@
             background: #f8f9fa;
         }
 
-        /* Header/Navigation */
+        /* Header - IDENTICAL TO userDashboard.html */
         header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -47,8 +43,8 @@
 
         .nav-links {
             display: flex;
-            align-items: center;
             gap: 2.5rem;
+            align-items: center;
         }
 
         .nav-links a {
@@ -63,51 +59,59 @@
             opacity: 0.8;
         }
 
-        /* User Greeting - smaller + italicized */
+        /* USER AREA - FULL NAME + DASHBOARD LINK + LOGOUT */
         .user-area {
             display: flex;
             align-items: center;
-            gap: 0.8rem;
+            gap: 1.5rem;
             font-size: 0.95rem;
-            font-style: italic;
-            color: rgba(255, 255, 255, 0.95);
         }
 
-        .user-area span#userName {
+        .user-greeting {
+            text-align: right;
+        }
+
+        .user-greeting .greeting {
+            font-style: italic;
+            margin-bottom: 2px;
+        }
+
+        .user-greeting span#fullUserName {
             font-weight: 600;
             color: white;
         }
-        
+
+        .user-greeting .dashboard-link {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            border-bottom: 1px dotted rgba(255,255,255,0.6);
+            transition: all 0.2s;
+        }
+
+        .user-greeting .dashboard-link:hover {
+            color: white;
+            border-bottom-color: white;
+        }
+
         .logout-btn {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255,255,255,0.2);
             color: white;
             border: 2px solid white;
             padding: 8px 20px;
             border-radius: 5px;
             cursor: pointer;
-            transition: all 0.3s;
-            font-size: 14px;
             font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
         }
-        
+
         .logout-btn:hover {
             background: white;
             color: #667eea;
         }
 
-        .logout-link {
-            color: rgba(255, 255, 255, 0.75);
-            font-size: 0.85rem;
-            text-decoration: none;
-            font-style: italic;
-        }
-
-        .logout-link:hover {
-            color: white;
-            text-decoration: underline;
-        }
-
-        /* Search Bar Section */
+        /* Main Content */
         .search-section {
             padding: 140px 2rem 80px;
             text-align: center;
@@ -126,381 +130,107 @@
         }
 
         .search-bar {
-            max-width: 600px;
-            margin: 0 auto;
+            max-width: 700px;
+            margin: 0 auto 3rem;
             display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .search-bar input {
-            flex: 1;
-            padding: 15px 20px;
-            font-size: 1.1rem;
-            border: 2px solid #e0e0e0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             border-radius: 50px;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        .search-bar input:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102,126,234,0.15);
-        }
-
-        .search-bar button {
-            background: #667eea;
-            color: white;
-            padding: 15px 35px;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .search-bar button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102,126,234,0.3);
-        }
-
-        /* Search Results Table */
-        .results-container {
-            max-width: 1000px;
-            margin: 3rem auto;
-            padding: 0 2rem;
-        }
-
-        .results-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border-radius: 12px;
             overflow: hidden;
-            display: none;
         }
 
-        .results-table.active {
-            display: table;
+        #searchInput {
+            flex: 1;
+            padding: 18px 24px;
+            border: none;
+            font-size: 1.1rem;
+            outline: none;
         }
 
-        .results-table th,
-        .results-table td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .results-table th {
+        #searchBtn {
             background: #667eea;
             color: white;
-            font-weight: 600;
-            font-size: 1rem;
-        }
-
-        .results-table tr:nth-child(even) {
-            background: #f8f9fa;
-        }
-
-        .results-table tr:hover {
-            background: #e8e9fa;
+            border: none;
+            padding: 0 32px;
+            font-size: 1.1rem;
+            cursor: pointer;
             transition: background 0.3s;
         }
-
-        .results-table td {
-            color: #333;
+        #searchBtn:hover {
+            background: #5a6fd8;
         }
 
-        .no-results {
-            text-align: center;
-            padding: 2rem;
-            color: #666;
-            font-style: italic;
+        /* Results Table */
+        .results-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: none;
         }
-
-        .join-button {
+        .results-container.active {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 1.2rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
             background: #667eea;
             color: white;
-            padding: 10px 24px;
+            font-weight: 600;
+        }
+        tr:hover {
+            background: #f0f0ff;
+        }
+        .join-button {
+            background: #10b981;
+            color: white;
             border: none;
+            padding: 10px 20px;
             border-radius: 50px;
-            font-size: 0.95rem;
+            cursor: pointer;
             font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .join-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102,126,234,0.3);
-        }
-
-        .join-button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .create-link {
-            display: block;
-            text-align: center;
-            margin-top: 2rem;
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .create-link:hover {
-            text-decoration: underline;
-        }
-
-        /* Toast Notification Styles */
-        .toast-container {
-            position: fixed;
-            top: 100px;
-            right: 20px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            pointer-events: none;
-        }
-
-        .toast {
-            background: white;
-            padding: 16px 24px;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            min-width: 300px;
-            max-width: 400px;
-            pointer-events: all;
-            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
-            opacity: 0;
-            animation-fill-mode: forwards;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes fadeOut {
-            from {
-                opacity: 1;
-            }
-            to {
-                opacity: 0;
-            }
-        }
-
-        .toast-icon {
-            font-size: 24px;
-            flex-shrink: 0;
-        }
-
-        .toast-message {
-            flex: 1;
-            font-size: 15px;
-            line-height: 1.4;
-        }
-
-        .toast.success {
-            border-left: 4px solid #10b981;
-        }
-
-        .toast.success .toast-icon {
-            color: #10b981;
-        }
-
-        .toast.error {
-            border-left: 4px solid #ef4444;
-        }
-
-        .toast.error .toast-icon {
-            color: #ef4444;
-        }
-
-        .toast.info {
-            border-left: 4px solid #3b82f6;
-        }
-
-        .toast.info .toast-icon {
-            color: #3b82f6;
-        }
-
-        .toast.warning {
-            border-left: 4px solid #f59e0b;
-        }
-
-        .toast.warning .toast-icon {
-            color: #f59e0b;
-        }
-
-        /* Confirmation Modal */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 9998;
-            animation: fadeIn 0.2s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .modal-overlay.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal {
-            background: white;
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 450px;
-            width: 90%;
-            animation: scaleIn 0.2s ease;
-        }
-
-        @keyframes scaleIn {
-            from {
-                transform: scale(0.9);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        .modal h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: #333;
-        }
-
-        .modal p {
-            font-size: 1.1rem;
-            color: #666;
-            margin-bottom: 1.5rem;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-        }
-
-        .modal-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
             transition: all 0.3s;
         }
-
-        .modal-btn.cancel {
-            background: #e5e7eb;
-            color: #374151;
-        }
-
-        .modal-btn.cancel:hover {
-            background: #d1d5db;
-        }
-
-        .modal-btn.confirm {
-            background: #667eea;
-            color: white;
-        }
-
-        .modal-btn.confirm:hover {
-            background: #5568d3;
+        .join-button:hover {
+            background: #0d8f63;
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102,126,234,0.3);
         }
 
-        /* Footer */
-        footer {
-            background: #333;
-            color: white;
-            text-align: center;
-            padding: 2rem;
-            margin-top: 4rem;
-        }
+        /* Toast & Modal */
+        .toast-container { position: fixed; top: 100px; right: 20px; z-index: 9999; pointer-events: none; }
+        .toast { background: white; padding: 16px 24px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px; min-width: 300px; animation: slideIn .3s ease, fadeOut .3s ease 2.7s; opacity: 0; animation-fill-mode: forwards; border-left: 4px solid #10b981; }
+        .toast.error { border-left-color: #ef4444; }
+        @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
 
-        @media (max-width: 768px) {
-            .search-section h2 {
-                font-size: 2rem;
-            }
-
-            .nav-links {
-                gap: 1rem;
-                font-size: 0.9rem;
-            }
-
-            .search-bar {
-                flex-direction: column;
-            }
-
-            .search-bar input,
-            .search-bar button {
-                width: 100%;
-            }
-
-            .results-table th,
-            .results-table td {
-                font-size: 0.85rem;
-                padding: 0.7rem;
-            }
-
-            .join-button {
-                padding: 8px 16px;
-                font-size: 0.85rem;
-            }
-
-            .toast-container {
-                right: 10px;
-                left: 10px;
-            }
-
-            .toast {
-                min-width: auto;
-                width: 100%;
-            }
-        }
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9998; align-items: center; justify-content: center; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: white; padding: 2rem; border-radius: 16px; max-width: 450px; width: 90%; text-align: center; }
+        .modal h3 { margin-bottom: 1rem; }
+        .modal-buttons { display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; }
+        .modal-btn { padding: 12px 24px; border: none; border-radius: 50px; cursor: pointer; font-weight: 600; }
+        .modal-btn.cancel { background: #e5e7eb; color: #374151; }
+        .modal-btn.confirm { background: #10b981; color: white; }
     </style>
 </head>
 <body>
+
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Confirmation Modal -->
+    <!-- Join Confirmation Modal -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal">
             <h3>Join Study Group?</h3>
-            <p id="modalMessage"></p>
+            <p>Are you sure you want to join "<span id="modalGroupName"></span>"?</p>
             <div class="modal-buttons">
                 <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
                 <button class="modal-btn confirm" onclick="confirmJoin()">Join Group</button>
@@ -508,222 +238,152 @@
         </div>
     </div>
 
-    <!-- Navigation -->
     <header>
         <nav>
             <div class="logo">📚 StudySessions</div>
-
             <div class="nav-links">
                 <a href="searchForm.html">Find Groups</a>
                 <a href="myGroups.html">My Groups</a>
                 <a href="createGroup.html">Create Group</a>
 
-                <!-- User Greeting (smaller + italicized) -->
                 <div class="user-area">
-                    Hi,<span id="userName">Guest</span>!
+                    <div class="user-greeting">
+                        <div class="greeting">Hi, <span id="fullUserName">User</span>!</div>
+                        <a href="userDashboard.html" class="dashboard-link">My Dashboard</a>
+                    </div>
                     <button class="logout-btn" onclick="logout()">Logout</button>
                 </div>
             </div>
         </nav>
     </header>
 
-    <!-- Search Bar Section -->
-    <section class="search-section">
+    <div class="search-section">
         <h2>Find Your Study Group</h2>
-        <p>Search by class name, course code, subject, or group name</p>
+        <p>Search by class name, code, subject, or group name</p>
+
         <div class="search-bar">
-            <input type="text" id="search-input" placeholder="e.g., MATH101, Calculus, Physics..." 
-                   onkeypress="if(event.key === 'Enter') searchStudyGroups()">
-            <button onclick="searchStudyGroups()">Search</button>
+            <input type="text" id="searchInput" placeholder="e.g. CS101, Biology, Math Study Buddies..." autocomplete="off">
+            <button id="searchBtn">Search</button>
         </div>
-    </section>
 
-    <!-- Results Container -->
-    <div class="results-container">
-        <table class="results-table" id="results-table">
-            <thead>
-                <tr>
-                    <th>Class Name</th>
-                    <th>Class Code</th>
-                    <th>Subject</th>
-                    <th>Study Group</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="results-table-body">
-                <!-- Results will be inserted here -->
-            </tbody>
-        </table>
-
-        <a href="createGroup.html" class="create-link">Don't see your class? Create a new study group →</a>
+        <div class="results-container" id="resultsContainer">
+            <table id="resultsTable">
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Code</th>
+                        <th>Subject</th>
+                        <th>Group Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsTableBody"></tbody>
+            </table>
+        </div>
     </div>
 
-
-
     <script>
-        // Toast notification system
-        function showToast(message, type = 'info') {
+        let groupToJoin = null;
+
+        function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            
-            const icons = {
-                success: '✓',
-                error: '✕',
-                warning: '⚠',
-                info: 'ℹ'
-            };
-            
-            toast.innerHTML = `
-                <span class="toast-icon">${icons[type] || icons.info}</span>
-                <span class="toast-message">${message}</span>
-            `;
-            
+            toast.innerHTML = `<span>${message}</span>`;
             container.appendChild(toast);
-            
-            // Remove toast after animation completes
-            setTimeout(() => {
-                toast.remove();
-            }, 3000);
+            setTimeout(() => toast.remove(), 3000);
         }
 
-        // Modal system
-        let pendingJoinGroupId = null;
-        let pendingJoinGroupName = null;
+        // Load full name on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('user') || 'null');
+            if (user?.firstName) {
+                const firstName = user.firstName || 'User';
+                const lastName = user.lastName || '';
+                const fullName = `${firstName} ${lastName}`.trim() || 'User';
+                document.getElementById('fullUserName').textContent = fullName;
+            }
+        });
+
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const resultsTableBody = document.getElementById('resultsTableBody');
+        const resultsContainer = document.getElementById('resultsContainer');
+
+        searchBtn.addEventListener('click', searchStudyGroups);
+        searchInput.addEventListener('keypress', e => {
+            if (e.key === 'Enter') searchStudyGroups();
+        });
+
+        async function searchStudyGroups() {
+            const query = searchInput.value.trim();
+            if (!query) {
+                showToast('Please enter a search term', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/webproject/api/groups/search?query=${encodeURIComponent(query)}`);
+                const groups = await response.json();
+
+                resultsTableBody.innerHTML = '';
+
+                if (groups.length === 0) {
+                    resultsTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 3rem; color: #666;">No groups found. Try a different search term!</td></tr>';
+                } else {
+                    groups.forEach(group => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${group.className}</td>
+                            <td>${group.classCode}</td>
+                            <td>${group.subject}</td>
+                            <td>${group.groupName}</td>
+                            <td><button class="join-button" onclick='showModal(${group.groupId}, "${group.groupName.replace(/"/g, '&quot;')}")'>Join</button></td>
+                        `;
+                        resultsTableBody.appendChild(row);
+                    });
+
+                    resultsContainer.classList.add('active');
+                    showToast(`Found ${groups.length} study group${groups.length === 1 ? '' : 's'}`, 'success');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('An error occurred while searching.', 'error');
+            }
+        }
 
         function showModal(groupId, groupName) {
-            console.log('showModal called with:', { groupId, groupName });
-            pendingJoinGroupId = groupId;
-            pendingJoinGroupName = groupName;
-            console.log('Pending values set:', { pendingJoinGroupId, pendingJoinGroupName });
-            document.getElementById('modalMessage').textContent = `Are you sure you want to join "${groupName}"?`;
+            groupToJoin = groupId;
+            document.getElementById('modalGroupName').textContent = groupName;
             document.getElementById('modalOverlay').classList.add('active');
         }
 
         function closeModal() {
             document.getElementById('modalOverlay').classList.remove('active');
-            pendingJoinGroupId = null;
-            pendingJoinGroupName = null;
+            groupToJoin = null;
         }
 
         async function confirmJoin() {
-            if (pendingJoinGroupId === null || pendingJoinGroupName === null) {
-                showToast('Error: No group selected', 'error');
-                closeModal();
-                return;
-            }
-            
-            const groupId = pendingJoinGroupId;
-            const groupName = pendingJoinGroupName;
-            
+            if (!groupToJoin) return;
+            await joinGroup(groupToJoin);
             closeModal();
-            await joinGroup(groupId, groupName);
         }
 
-        // Check if user is logged in on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            const user = JSON.parse(localStorage.getItem('user'));
-            const nameSpan = document.getElementById('userName');
-
-            if (user && user.firstName) {
-                nameSpan.textContent = user.firstName;
-            } else {
-                if (!window.location.pathname.includes('login.html')) {
-                    window.location.href = 'login.html';
-                }
-            }
-        });
-
-        async function searchStudyGroups() {
-            const searchInput = document.getElementById('search-input').value.trim();
-            const resultsTable = document.getElementById('results-table');
-            const resultsTableBody = document.getElementById('results-table-body');
-
-            if (!searchInput) {
-                showToast('Please enter a search term', 'warning');
-                return;
-            }
-
-            // Check if user is logged in
-            const user = JSON.parse(localStorage.getItem('user'));
-            if (!user) {
-                showToast('You must be logged in to search for groups', 'error');
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 1500);
-                return;
-            }
-
-            try {
-                const response = await fetch(`api/groups/search?query=${encodeURIComponent(searchInput)}`);
-                
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                
-                const groups = await response.json();
-
-                // Clear previous results
-                resultsTableBody.innerHTML = '';
-
-                if (groups.length === 0) {
-                    resultsTableBody.innerHTML = `
-                        <tr>
-                            <td colspan="5" class="no-results">
-                                No study groups found for "${searchInput}". 
-                                <a href="createGroup.html" style="color: #667eea; font-weight: 600;">Create one?</a>
-                            </td>
-                        </tr>
-                    `;
-                    resultsTable.classList.add('active');
-                    showToast('No groups found matching your search', 'info');
-                    return;
-                }
-
-                // Populate table with results
-                groups.forEach(group => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${group.className}</td>
-                        <td>${group.classCode}</td>
-                        <td>${group.subject}</td>
-                        <td>${group.groupName}</td>
-                        <td><button class="join-button" onclick='showModal(${group.groupId}, "${group.groupName.replace(/"/g, '&quot;')}")'>Join</button></td>
-                    `;
-                    resultsTableBody.appendChild(row);
-                });
-
-                // Show the table
-                resultsTable.classList.add('active');
-                showToast(`Found ${groups.length} study group${groups.length === 1 ? '' : 's'}`, 'success');
-            } catch (error) {
-                console.error('Error fetching study groups:', error);
-                showToast('An error occurred while searching. Please try again.', 'error');
-            }
-        }
-
-        async function joinGroup(groupId, groupName) {
+        async function joinGroup(groupId) {
             const user = JSON.parse(localStorage.getItem('user'));
             if (!user) {
                 showToast('You must be logged in to join a group', 'error');
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 1500);
+                setTimeout(() => window.location.href = 'login.html', 1500);
                 return;
             }
-
-            // Debug: Log what we're sending
-            console.log('Joining group:', { groupId, groupName, userId: user.id });
 
             try {
                 const params = new URLSearchParams({
                     user: JSON.stringify(user),
                     groupId: String(groupId)
                 });
-                
-                console.log('Sending params:', params.toString());
-                
-                const response = await fetch('api/groups/join', {
+
+                const response = await fetch('/webproject/api/groups/join', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: params
@@ -732,11 +392,8 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    showToast(`Successfully joined "${groupName}"! Check "My Groups" to see it.`, 'success');
-                    // Optionally refresh search results
-                    setTimeout(() => {
-                        searchStudyGroups();
-                    }, 1000);
+                    showToast(`Successfully joined the group!`, 'success');
+                    setTimeout(searchStudyGroups, 1000);
                 } else {
                     showToast(result.message || 'Failed to join group', 'error');
                 }
@@ -748,16 +405,13 @@
 
         function logout() {
             localStorage.removeItem('user');
-            fetch('api/auth/logout', { method: 'GET' }).finally(() => {
+            fetch('/webproject/api/auth/logout', { method: 'GET' }).finally(() => {
                 window.location.href = 'login.html';
             });
         }
 
-        // Close modal when clicking outside
-        document.getElementById('modalOverlay').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
-            }
+        document.getElementById('modalOverlay').addEventListener('click', e => {
+            if (e.target === document.getElementById('modalOverlay')) closeModal();
         });
     </script>
 </body>
